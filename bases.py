@@ -1,6 +1,6 @@
 # Crée un tableau multi-dimensionnel de n par n
 def bases(n):
-    plateau = [[0]*n for i in range(n)]
+    plateau = [[0 for i in range(n)] for i in range(n)]
     return plateau
 
 # affiche le tableau pour vérifier le bon fonctionnement des sous-programmes
