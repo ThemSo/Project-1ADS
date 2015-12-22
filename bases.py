@@ -1,13 +1,16 @@
+# Crée un tableau de n par n
 def bases(n):
     plateau = [[0]*n for i in range(n)]
+    return plateau
+
+# affiche le tableau pour vérifier les codes
+def afficher_tableau(plateau):
+    print('')
     for ligne in plateau:
         for x in ligne:
-            print(x, ' ', end='')
-    print('\n')
-    return plateau
-bases(6)
+            print(x, '', end='')
+        print('')
 
-def list_deux_dimension (l):
-    l=[[]]
-    print(l)
-list_deux_dimension(list)
+plateau = bases(6)
+afficher_tableau(plateau)
+
