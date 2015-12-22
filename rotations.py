@@ -54,10 +54,19 @@ def rotation_plateau(plateau, m, n, sens):
 
 
 print("\n------------------\nAvant rotation:\n")
+
 afficher_tableau(plateau)
+
 print("\n------------------\nAprès rotation:\n")
 
-afficher_tableau(rotation_plateau(plateau,6,1,True))
+# numéros des cotés
+#  ___
+# |1|3|
+# |2|4|
+#  ---
+#
+# rotation_plateau(plateau, nombre_de_lignes, numero_du_cote, True = rotation horaire et False = antihoraire)
+plateau = rotation_plateau(plateau,6,1,True)
+afficher_tableau(plateau)
 
-# afficher_tableau(plateau)
 print('')
