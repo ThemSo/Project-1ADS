@@ -1,5 +1,3 @@
-from random import randint
-
 plateau = [
 	[0, 1, 1, 1, 1, 0], 
 	[1, 0, 1, 1, 0, 1], 
@@ -10,12 +8,6 @@ plateau = [
 ]
 
 # affiche le tableau pour vérifier le bon fonctionnement des sous-programmes
-# rotation_plateau(liste, nombre_de_ligne, numero_du_cote, True = horaire et False = antihoraire)
-# numéros des cotés
-#  ___
-# |1|3|
-# |2|4|
-#  ---
 def afficher_tableau(plateau):
     for ligne in plateau:
         for x in ligne:
@@ -23,7 +15,14 @@ def afficher_tableau(plateau):
         print('')
 
 
+# numéros des cotés
+#  ___
+# |1|3|
+# |2|4|
+#  ---
+#
 # rotation d'un plateau     
+# rotation_plateau(liste, nombre_de_ligne, numero_du_cote, True = horaire et False = antihoraire)
 def rotation_plateau(plateau, m, n, sens):
 	x, y, maxx, maxy = 0, 0, m//2, m//2
 	
@@ -66,7 +65,7 @@ print("\n------------------\nAprès rotation:\n")
 #  ---
 #
 # rotation_plateau(plateau, nombre_de_lignes, numero_du_cote, True = rotation horaire et False = antihoraire)
-plateau = rotation_plateau(plateau,6,1,True)
+plateau = rotation_plateau(plateau, 6, 1, True)
 afficher_tableau(plateau)
 
 print('')
