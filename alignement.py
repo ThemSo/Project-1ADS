@@ -8,6 +8,7 @@ plateau = [
 	[0, 1, 1, 1, 1, 0],
 ]
 
+
 def start_game():
     global x
     global y
@@ -15,7 +16,7 @@ def start_game():
     y = int(input("\nNombre de colonnes du plateau : "))
     x = int(input("Nombre de lignes du plateau : "))
     p = int(input("Nombre de pions à aligner : "))
-    if y <= 3 or x <= 3 or p < 2:
+    if y <= 5 or x <= 5 or p < 5:
         print("\nCa risque de ne pas etre tres amusant...")
         start_game()
         return False
