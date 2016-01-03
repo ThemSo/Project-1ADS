@@ -1,10 +1,12 @@
 plateau = [
-	[0, 1, 1, 1, 1, 0], 
-	[1, 0, 1, 1, 0, 1], 
-	[1, 1, 1, 0, 1, 1], 
-	[1, 1, 0, 0, 1, 1],
-	[1, 0, 1, 1, 1, 1],
-	[0, 1, 1, 1, 1, 0],
+	[0, 1, 1, 1, 1, 0, 0, 0], 
+	[1, 0, 1, 1, 0, 1, 0, 0], 
+	[1, 1, 1, 0, 1, 1, 0, 0], 
+	[1, 1, 0, 0, 1, 1, 0, 0],
+	[1, 0, 1, 1, 1, 1, 0, 0],
+	[0, 1, 1, 1, 1, 0, 0, 0],
+	[0, 1, 1, 1, 1, 0, 0, 0],
+	[0, 1, 1, 1, 1, 0, 0, 0],
 ]
 
 # affiche le tableau pour vérifier le bon fonctionnement des sous-programmes
@@ -65,7 +67,7 @@ print("\n------------------\nAprès rotation:\n")
 #  ---
 #
 # rotation_plateau(plateau, nombre_de_lignes, numero_du_cote, True = rotation horaire et False = antihoraire)
-plateau = rotation_plateau(plateau, 6, 1, True)
+plateau = rotation_plateau(plateau, 8, 1, True)
 afficher_tableau(plateau)
 
 print('')
