@@ -14,23 +14,23 @@ def render():
 
 def draw_plateau(plateau):
     height = screen_size[1]
-    height_cadrant = round((height-padding*2)/2)
+    height_cadrant = round((height-padding*2-gutter)/2)
     mid_gutter = round(gutter/2)
     pygame.draw.rect(screen, RED, (padding, padding, height_cadrant-mid_gutter, height_cadrant-mid_gutter), 0)
     pygame.draw.rect(screen, RED, (padding+height_cadrant+mid_gutter, padding, height_cadrant-mid_gutter, height_cadrant-mid_gutter), 0)
     pygame.draw.rect(screen, RED, (padding+height_cadrant+mid_gutter, padding+height_cadrant+mid_gutter, height_cadrant-mid_gutter, height_cadrant-mid_gutter), 0)
     pygame.draw.rect(screen, RED, (padding, padding+height_cadrant+mid_gutter, height_cadrant-mid_gutter, height_cadrant-mid_gutter), 0)
-    height_square = round(((height-(padding*2))/len(plateau)))
+    height_square = round(((height-(padding*2)-gutter)/len(plateau)))
     for iy, y in enumerate(plateau):
         for ix, x in enumerate(y):
 
             if ix < (len(y)+1)//2:
-                addx = -gutter//4
+                addx = -gutter//2
             else:
-                addx = gutter//4
+                addx = 0
 
             if iy < (len(y)+1)//2:
-                addy = -gutter//4
+                addy = -gutter//2
             else:
                 addy = gutter//4
             draw_x = ((ix*height_square)+padding+addx)+round((height_square-30)/2)
@@ -71,7 +71,7 @@ def pos_click_plateau(pos):
     height = screen_size[1]
     height_cadrant = round((height-padding*2)/2)
     x, y = pos[0]-padding, pos[1]-padding
-    height_square = round(((height-(padding*2))/len(plateau)))
+    height_square = round(((height-(padding*2)-gutter)/len(plateau)))
     if y >= height_cadrant-gutter/2:
         if height_cadrant+gutter/2 > y:
             y = -1
@@ -86,15 +86,14 @@ def pos_click_plateau(pos):
     x //= height_square
     y //= height_square
     if columns > x >= 0 and columns > y >= 0:
-        return y, x
+        return x, y
     return -1, -1
 
 
 while running:
     event = pygame.event.wait()
     if event.type == pygame.MOUSEBUTTONUP:
-        mouse_pos = pygame.mouse.get_pos()
-        print(pos_click_plateau(mouse_pos))
+        print(pos_click_plateau(pygame.mouse.get_pos()))
     if event.type == pygame.QUIT:
         running = False
     elif animation:
