@@ -1,5 +1,4 @@
 import pygame
-import math
 import os.path
 import json
 import time
@@ -20,13 +19,13 @@ def render():
 
 def draw_arrow():
     height = screen_size[1]-(padding_step_2*2)
-    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 0), False, False), (padding_step_2, padding_step_2-30))
-    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 0), True, False), (padding_step_2-30+height, padding_step_2-30))
+    screen.blit(img_arrow, (padding_step_2, padding_step_2-30))
+    screen.blit(pygame.transform.flip(img_arrow, True, False), (padding_step_2-30+height, padding_step_2-30))
     screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 90), True, True), (padding_step_2+height, padding_step_2))
     screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 90), True, False), (padding_step_2+height, padding_step_2+height-30))
-    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 0), True, True), (padding_step_2+height-30, padding_step_2+height))
-    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 180), True, False), (padding_step_2, padding_step_2+height))
-    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, -90), True, True), (padding_step_2-30, padding_step_2+height-30))
+    screen.blit(pygame.transform.flip(img_arrow, True, True), (padding_step_2+height-30, padding_step_2+height))
+    screen.blit(pygame.transform.flip(img_arrow, False, True), (padding_step_2, padding_step_2+height))
+    screen.blit(pygame.transform.rotate(img_arrow, 90), (padding_step_2-30, padding_step_2+height-30))
     screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 90), False, True), (padding_step_2-30, padding_step_2))
 
 
@@ -107,7 +106,7 @@ def ease(t, b, c, d):
 
 
 def save():
-    file = open("save", "w")
+    file = open("cache", "w")
     data = {'plateau': plateau, 'step': STEP, 'player': PLAYER}
     file.write(json.dumps(data))
     file.close()
@@ -117,8 +116,8 @@ def load():
     global PLAYER
     global plateau
     global STEP
-    if os.path.isfile("save"):
-        file = open("save", "r")
+    if os.path.isfile("cache"):
+        file = open("cache", "r")
         data = file.read()
         if data != '':
             data = json.loads(data)
