@@ -1,5 +1,7 @@
 import pygame
 import math
+import os.path
+import json
 import time
 
 
@@ -88,6 +90,31 @@ def ease(t, b, c, d):
     return -c * (t*t*t*t - 1) + b
 
 
+def save():
+    file = open("save", "w")
+    data = {'plateau': plateau, 'step': STEP, 'player': PLAYER}
+    file.write(json.dumps(data))
+    file.close()
+
+
+def load():
+    global PLAYER
+    global plateau
+    global STEP
+    if os.path.exists("save"):
+        file = open("save", "r")
+        data = file.read()
+        if data != '':
+            data = json.loads(data)
+            if 'player' in data and data['player'] != '':
+                if 'step' in data and data['step'] != '':
+                    if 'plateau' in data and data['plateau'] != '':
+                        STEP = data['step']
+                        PLAYER = data['player']
+                        plateau = data['plateau']
+        file.close()
+
+
 def pose_pion(mouse_pos, player):
     pos = pos_click_plateau(mouse_pos)
     x = pos[0]
@@ -98,6 +125,7 @@ def pose_pion(mouse_pos, player):
         render()
         resize_plateau(time.time()*1000, padding_step_2, 600)
         STEP = 2
+        save()
 
 
 running = True
@@ -111,16 +139,15 @@ PLAYER = 1
 STEP = 1
 padding_step_1 = 8
 padding_step_2 = 80
+columns = 6
+plateau = bases(columns)
+load()
 if STEP == 2:
     padding = padding_step_2
 else:
     padding = padding_step_1
 
-columns = 6
-plateau = bases(columns)
-
 pygame.init()
-
 screen_size = (800, 500)
 screen = pygame.display.set_mode(screen_size)
 clock = pygame.time.Clock()
