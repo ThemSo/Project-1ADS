@@ -101,6 +101,7 @@ def click_arrows(mouse_pos):
         action = True
 
     if action:
+        sound[0].play()
         render()
         STEP = 1
         PLAYER = 1 if PLAYER == 2 else 2
