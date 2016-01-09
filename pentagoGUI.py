@@ -12,22 +12,22 @@ def bases(n):
 
 def render():
     screen.fill(BLACK)
-    draw_plateau(plateau)
     if STEP == 2:
         draw_arrow()
-    pygame.display.update()
+    draw_plateau(plateau)
+    pygame.display.flip()
 
 
 def draw_arrow():
-    height = screen_size[1]-(padding*2)
-    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 0), False, False), (padding, padding-30))
-    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 0), True, False), (padding-30+height, padding-30))
-    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 90), True, True), (padding+height, padding))
-    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 90), True, False), (padding+height, padding+height-30))
-    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 0), True, True), (padding+height-30, padding+height))
-    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 180), True, False), (padding, padding+height))
-    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, -90), True, True), (padding-30, padding+height-30))
-    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 90), False, True), (padding-30, padding))
+    height = screen_size[1]-(padding_step_2*2)
+    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 0), False, False), (padding_step_2, padding_step_2-30))
+    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 0), True, False), (padding_step_2-30+height, padding_step_2-30))
+    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 90), True, True), (padding_step_2+height, padding_step_2))
+    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 90), True, False), (padding_step_2+height, padding_step_2+height-30))
+    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 0), True, True), (padding_step_2+height-30, padding_step_2+height))
+    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 180), True, False), (padding_step_2, padding_step_2+height))
+    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, -90), True, True), (padding_step_2-30, padding_step_2+height-30))
+    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 90), False, True), (padding_step_2-30, padding_step_2))
 
 
 def draw_plateau(plateau):
@@ -96,13 +96,14 @@ def resize_plateau(start, end_value, duration):
         padding = round(ease(current_time-start, start_value, end_value, duration))
         render()
         clock.tick(FPS)
+    print(padding)
     render()
 
 
 # t: temps actuel, b: valeur de départ, c: valeur finale, d: durée
 def ease(t, b, c, d):
     t = t/d-1
-    return -c * (t*t*t*t - 1) + b
+    return c*(t*t*t + 1) + b
 
 
 def save():
@@ -140,7 +141,7 @@ def pose_pion(mouse_pos, player):
         plateau[y][x] = player
         render()
         STEP = 2
-        resize_plateau(time.time()*1000, padding_step_2, 600)
+        resize_plateau(time.time()*1000, padding_step_2-padding_step_1, 600)
         save()
 
 
@@ -154,7 +155,7 @@ GUTTER = 8
 PLAYER = 1
 STEP = 1
 padding_step_1 = 8
-padding_step_2 = 50
+padding_step_2 = 45
 columns = 6
 plateau = bases(columns)
 load()
