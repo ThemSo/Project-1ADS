@@ -13,7 +13,21 @@ def bases(n):
 def render():
     screen.fill(BLACK)
     draw_plateau(plateau)
+    if STEP == 2:
+        draw_arrow()
     pygame.display.update()
+
+
+def draw_arrow():
+    height = screen_size[1]-(padding*2)
+    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 0), False, False), (padding, padding-30))
+    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 0), True, False), (padding-30+height, padding-30))
+    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 90), True, True), (padding+height, padding))
+    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 90), True, False), (padding+height, padding+height-30))
+    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 0), True, True), (padding+height-30, padding+height))
+    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 180), True, False), (padding, padding+height))
+    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, -90), True, True), (padding-30, padding+height-30))
+    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 90), False, True), (padding-30, padding))
 
 
 def draw_plateau(plateau):
@@ -82,6 +96,7 @@ def resize_plateau(start, end_value, duration):
         padding = round(ease(current_time-start, start_value, end_value, duration))
         render()
         clock.tick(FPS)
+    render()
 
 
 # t: temps actuel, b: valeur de départ, c: valeur finale, d: durée
@@ -124,8 +139,8 @@ def pose_pion(mouse_pos, player):
         sound[0].play()
         plateau[y][x] = player
         render()
-        resize_plateau(time.time()*1000, padding_step_2, 600)
         STEP = 2
+        resize_plateau(time.time()*1000, padding_step_2, 600)
         save()
 
 
@@ -139,7 +154,7 @@ GUTTER = 8
 PLAYER = 1
 STEP = 1
 padding_step_1 = 8
-padding_step_2 = 80
+padding_step_2 = 50
 columns = 6
 plateau = bases(columns)
 load()
@@ -153,6 +168,7 @@ screen_size = (800, 500)
 screen = pygame.display.set_mode(screen_size)
 clock = pygame.time.Clock()
 img = [pygame.image.load('img/0.png'), pygame.image.load('img/1.png'), pygame.image.load('img/2.png')]
+img_arrow = pygame.image.load('img/arrow.png')
 sound = [pygame.mixer.Sound("drop.wav")]
 pygame.display.set_caption('Pentago')
 render()
