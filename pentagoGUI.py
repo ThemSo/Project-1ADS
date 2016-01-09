@@ -106,14 +106,15 @@ DARK_RED = (131, 0, 0)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 FPS = 60
-GUTTER = 6
+GUTTER = 8
 PLAYER = 1
 STEP = 1
-padding_step_2 = 60
+padding_step_1 = 8
+padding_step_2 = 80
 if STEP == 2:
     padding = padding_step_2
 else:
-    padding = 20
+    padding = padding_step_1
 
 columns = 6
 plateau = bases(columns)
