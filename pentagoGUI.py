@@ -17,16 +17,95 @@ def render():
     pygame.display.flip()
 
 
+# numéros des cotés
+#  ___
+# |1|3|
+# |2|4|
+#  ---
+#
+# rotation d'un plateau
+# rotation_plateau(liste, nombre_de_ligne, numero_du_cote, True = horaire et False = antihoraire)
+def rotation_plateau(plateau, m, n, sens):
+    x, y, maxx, maxy = 0, 0, m//2, m//2
+
+    if n % 2 == 0:
+        x = m//2
+        maxx = m
+    if n > 2:
+        y = m//2
+        maxy = m
+    tmp = [[0 for i in range(m//2)] for i in range(m//2)]
+    tmpy = maxy
+    while tmpy > y:
+        tmpx = maxx
+        while tmpx > x:
+            if not sens:
+                tmp[maxy-tmpy][tmpx-x-1] = plateau[tmpx-1][tmpy-1]
+            else:
+                tmp[tmpy-y-1][maxx-tmpx] = plateau[tmpx-1][tmpy-1]
+            tmpx -= 1
+        tmpy -= 1
+
+    for nx, vx in enumerate(tmp):
+        for ny, vy in enumerate(vx):
+            plateau[nx+x][ny+y] = vy
+
+    return plateau
+
+
 def draw_arrow():
     height = screen_size[1]-(padding_step_2*2)
+
     screen.blit(img_arrow, (padding_step_2, padding_step_2-30))
     screen.blit(pygame.transform.flip(img_arrow, True, False), (padding_step_2-30+height, padding_step_2-30))
     screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 90), True, True), (padding_step_2+height, padding_step_2))
     screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 90), True, False), (padding_step_2+height, padding_step_2+height-30))
     screen.blit(pygame.transform.flip(img_arrow, True, True), (padding_step_2+height-30, padding_step_2+height))
     screen.blit(pygame.transform.flip(img_arrow, False, True), (padding_step_2, padding_step_2+height))
+
     screen.blit(pygame.transform.rotate(img_arrow, 90), (padding_step_2-30, padding_step_2+height-30))
     screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 90), False, True), (padding_step_2-30, padding_step_2))
+
+
+def click_arrows(mouse_pos):
+    global plateau
+    global columns
+    global STEP
+    global PLAYER
+    height = screen_size[1]-(padding_step_2*2)
+    x, y = mouse_pos[0], mouse_pos[1]
+    action = False
+    if padding_step_2+30 >= x >= padding_step_2 >= y >= padding_step_2-30:
+        plateau = rotation_plateau(plateau, columns, 1, True)
+        action = True
+    elif padding_step_2+height >= x >= padding_step_2+height-30 and padding_step_2 >= y >= padding_step_2-30:
+        plateau = rotation_plateau(plateau, columns, 3, False)
+        action = True
+    elif padding_step_2+height+30 >= x >= padding_step_2+height and padding_step_2+30 >= y >= padding_step_2:
+        plateau = rotation_plateau(plateau, columns, 3, True)
+        action = True
+    elif padding_step_2+height+30 >= x >= padding_step_2+height >= y >= padding_step_2+height-30:
+        plateau = rotation_plateau(plateau, columns, 4, False)
+        action = True
+    elif padding_step_2+height+30 >= y >= padding_step_2+height >= x >= padding_step_2+height-30:
+        plateau = rotation_plateau(plateau, columns, 4, True)
+        action = True
+    elif padding_step_2+30 >= x >= padding_step_2 and padding_step_2+height+30 >= y >= padding_step_2+height:
+        plateau = rotation_plateau(plateau, columns, 2, False)
+        action = True
+    elif padding_step_2 >= x >= padding_step_2-30 and padding_step_2+height >= y >= padding_step_2+height-30:
+        plateau = rotation_plateau(plateau, columns, 2, True)
+        action = True
+    elif padding_step_2+30 >= y >= padding_step_2 >= x >= padding_step_2-30:
+        plateau = rotation_plateau(plateau, columns, 1, False)
+        action = True
+
+    if action:
+        render()
+        STEP = 1
+        PLAYER = 1 if PLAYER == 2 else 2
+        resize_plateau(time.time()*1000, padding_step_1-padding_step_2, 600)
+        save()
 
 
 def draw_plateau(plateau):
@@ -95,7 +174,6 @@ def resize_plateau(start, end_value, duration):
         padding = round(ease(current_time-start, start_value, end_value, duration))
         render()
         clock.tick(FPS)
-    print(padding)
     render()
 
 
@@ -178,6 +256,8 @@ while running:
     if event.type == pygame.MOUSEBUTTONUP:
         if STEP == 1:
             pose_pion(pygame.mouse.get_pos(), PLAYER)
+        elif STEP == 2:
+            click_arrows(pygame.mouse.get_pos())
     if event.type == pygame.QUIT:
         running = False
 pygame.quit()
