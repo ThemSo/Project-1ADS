@@ -121,7 +121,7 @@ def pose_pion(mouse_pos, player):
     y = pos[1]
     if plateau[y][x] == 0 and x != -1:
         global STEP
-        sound_drop.play()
+        sound[0].play()
         plateau[y][x] = player
         render()
         resize_plateau(time.time()*1000, padding_step_2, 600)
@@ -149,11 +149,11 @@ else:
     padding = padding_step_1
 
 pygame.init()
-sound_drop = pygame.mixer.Sound("drop.wav")
 screen_size = (800, 500)
 screen = pygame.display.set_mode(screen_size)
 clock = pygame.time.Clock()
 img = [pygame.image.load('img/0.png'), pygame.image.load('img/1.png'), pygame.image.load('img/2.png')]
+sound = [pygame.mixer.Sound("drop.wav")]
 pygame.display.set_caption('Pentago')
 render()
 
