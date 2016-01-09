@@ -101,7 +101,7 @@ def load():
     global PLAYER
     global plateau
     global STEP
-    if os.path.exists("save"):
+    if os.path.isfile("save"):
         file = open("save", "r")
         data = file.read()
         if data != '':
