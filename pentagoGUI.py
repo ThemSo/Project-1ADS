@@ -14,13 +14,13 @@ def render():
 
 def draw_plateau(plateau):
     height = screen_size[1]
-    height_cadrant = round((height-padding*2-gutter)/2)
+    height_cadrant = round((height-padding*2)/2)
     mid_gutter = round(gutter/2)
     pygame.draw.rect(screen, RED, (padding, padding, height_cadrant-mid_gutter, height_cadrant-mid_gutter), 0)
     pygame.draw.rect(screen, RED, (padding+height_cadrant+mid_gutter, padding, height_cadrant-mid_gutter, height_cadrant-mid_gutter), 0)
     pygame.draw.rect(screen, RED, (padding+height_cadrant+mid_gutter, padding+height_cadrant+mid_gutter, height_cadrant-mid_gutter, height_cadrant-mid_gutter), 0)
     pygame.draw.rect(screen, RED, (padding, padding+height_cadrant+mid_gutter, height_cadrant-mid_gutter, height_cadrant-mid_gutter), 0)
-    height_square = round(((height-(padding*2)-gutter)/len(plateau)))
+    height_square = round(((height-(padding*2))/len(plateau)))
     for iy, y in enumerate(plateau):
         for ix, x in enumerate(y):
 
