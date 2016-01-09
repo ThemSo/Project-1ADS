@@ -89,6 +89,14 @@ def pos_click_plateau(pos):
         return x, y
     return -1, -1
 
+def player_pion(mouse_pos, player):
+    pos = pos_click_plateau(mouse_pos)
+    x = pos[0]
+    y = pos[1]
+    if plateau[y][x] == 0 and x != -1:
+        plateau[y][x] = player
+    render()
+
 
 while running:
     event = pygame.event.wait()
