@@ -17,6 +17,7 @@ def render(rotation):
     draw_plateau(plateau, rotation)
     if STEP == 1 and not animation:
         screen.blit(img[PLAYER], pygame.rect.Rect(mouse_pos[0]-15, mouse_pos[1]-15, 30, 30))
+    draw_button_reset()
     pygame.display.flip()
 
 
@@ -340,6 +341,8 @@ def pose_pion(mouse_pos, player):
         resize_plateau(time.time()*1000, padding_step_2-padding_step_1, 600)
         save()
 
+def draw_button_reset():
+        pygame.draw.rect(screen, RED, (550,25,200,50),0)
 
 running = True
 RED = (152, 0, 0)
