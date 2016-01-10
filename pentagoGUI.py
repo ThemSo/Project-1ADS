@@ -341,16 +341,6 @@ def pose_pion(mouse_pos, player):
         resize_plateau(time.time()*1000, padding_step_2-padding_step_1, 600)
         save()
 
-def draw_button_reset():
-        pygame.draw.rect(screen, RED, (550,25,200,50),0)
-
-def txt_new_game():
-    font = pygame.font.Font(None, 36)
-    text = font.render("Nouvelle partie", 1, (10, 10, 10))
-    textpos = text.get_rect()
-    textpos.centerx = screen.get_rect().centerx+247
-    textpos.centery = screen.get_rect().centery-200
-    screen.blit(text, textpos)
 
 def draw_button_reset():
     pygame.draw.rect(screen, RED, (550,25,200,50),0)
