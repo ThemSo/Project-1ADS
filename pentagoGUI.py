@@ -315,6 +315,7 @@ def load():
     global PLAYER
     global plateau
     global STEP
+    global columns
     if os.path.isfile("cache"):
         file = open("cache", "r")
         data = file.read()
@@ -326,6 +327,7 @@ def load():
                         STEP = data['step']
                         PLAYER = data['player']
                         plateau = data['plateau']
+                        columns = len(plateau)
         file.close()
 
 #def new_game():
@@ -348,12 +350,12 @@ def pose_pion(mouse_pos, player):
 
 
 def draw_button_reset():
-    pygame.draw.rect(screen, RED, (550,25,200,50),0)
+    pygame.draw.rect(screen, WHITE, (screen_size[1],padding_step_1,250-padding_step_1,50),0)
     font = pygame.font.Font(None, 36)
     text = font.render("Nouvelle partie", 1, (10, 10, 10))
     textpos = text.get_rect()
-    textpos.centerx = screen.get_rect().centerx+247
-    textpos.centery = screen.get_rect().centery-200
+    textpos.centerx = screen_size[1]+((250-padding_step_1)//2)
+    textpos.centery = padding_step_1+(50//2)
     screen.blit(text, textpos)
 
 
