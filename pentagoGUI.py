@@ -350,13 +350,7 @@ def pose_pion(mouse_pos, player):
 
 
 def draw_button_reset():
-    pygame.draw.rect(screen, WHITE, (screen_size[1],padding_step_1,250-padding_step_1,50),0)
-    font = pygame.font.Font(None, 36)
-    text = font.render("Nouvelle partie", 1, (10, 10, 10))
-    textpos = text.get_rect()
-    textpos.centerx = screen_size[1]+((250-padding_step_1)//2)
-    textpos.centery = padding_step_1+(50//2)
-    screen.blit(text, textpos)
+    screen.blit(img_button_reset, (screen_size[1], padding_step_1))
 
 
 running = True
@@ -385,6 +379,7 @@ screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
 clock = pygame.time.Clock()
 img = [pygame.image.load('img/0.png'), pygame.image.load('img/1.png'), pygame.image.load('img/2.png')]
 img_arrow = pygame.image.load('img/arrow.png')
+img_button_reset = pygame.image.load('img/button_reset.png')
 sound = [pygame.mixer.Sound("drop.wav")]
 pygame.display.set_caption('Pentago')
 render((0, 0))
