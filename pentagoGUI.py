@@ -1,5 +1,6 @@
 import pygame
 import os.path
+import math
 import json
 import time
 
@@ -258,6 +259,16 @@ img_arrow = pygame.image.load('img/arrow.png')
 sound = [pygame.mixer.Sound("drop.wav")]
 pygame.display.set_caption('Pentago')
 render()
+
+
+# position d'un point après rotation
+def point_rotate(cx, cy, x, y, angle):
+    radians = (math.pi / 180) * -angle
+    cos = math.cos(radians)
+    sin = math.sin(radians)
+    nx = (cos * (x - cx)) + (sin * (y - cy)) + cx
+    ny = (cos * (y - cy)) - (sin * (x - cx)) + cy
+    return nx, ny
 
 
 while running:
