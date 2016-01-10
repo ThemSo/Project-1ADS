@@ -328,6 +328,11 @@ def load():
                         plateau = data['plateau']
         file.close()
 
+#def new_game():
+ #   file = open("cache","w")
+ #   file.write("")
+#  file.close()
+
 
 def pose_pion(mouse_pos, player):
     pos = pos_click_plateau(mouse_pos)
