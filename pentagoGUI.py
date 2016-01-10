@@ -14,10 +14,12 @@ def render():
     if STEP == 2:
         draw_arrow()
     draw_plateau(plateau)
+    if STEP == 1 and not animation:
+        screen.blit(img_cursor[PLAYER-1], pygame.rect.Rect(mouse_pos[0]-15, mouse_pos[1]-15, 30, 30))
     pygame.display.flip()
 
 
-# numéros des cotés
+# numeros des cotes
 #  ___
 # |1|3|
 # |2|4|
@@ -142,7 +144,7 @@ def draw_plateau(plateau):
 # x = pos[1]
 # et donc :
 # plateau[y][x]
-# retourne la valeur de la case cliquée
+# retourne la valeur de la case cliquee
 def pos_click_plateau(pos):
     height = screen_size[1]
     height_cadrant = round((height-padding*2)/2)
@@ -168,17 +170,20 @@ def pos_click_plateau(pos):
 
 def resize_plateau(start, end_value, duration):
     global padding
+    global animation
     start_value = padding
     current_time = time.time()*1000
+    animation = True
     while current_time-start <= duration:
         current_time = time.time()*1000
         padding = round(ease(current_time-start, start_value, end_value, duration))
         render()
         clock.tick(FPS)
+    animation = False
     render()
 
 
-# t: temps actuel, b: valeur de départ, c: valeur finale, d: durée
+# t: temps actuel, b: valeur de depart, c: valeur finale, d: duree
 def ease(t, b, c, d):
     t = t/d-1
     return c*(t*t*t + 1) + b
@@ -235,6 +240,8 @@ STEP = 1
 padding_step_1 = 8
 padding_step_2 = 45
 columns = 6
+mouse_pos = (0, 0)
+animation = False
 plateau = bases(columns)
 load()
 if STEP == 2:
@@ -247,10 +254,12 @@ screen_size = (800, 500)
 screen = pygame.display.set_mode(screen_size)
 clock = pygame.time.Clock()
 img = [pygame.image.load('img/0.png'), pygame.image.load('img/1.png'), pygame.image.load('img/2.png')]
+img_cursor = [pygame.image.load('img/cursor1.png'), pygame.image.load('img/cursor2.png')]
 img_arrow = pygame.image.load('img/arrow.png')
 sound = [pygame.mixer.Sound("drop.wav")]
 pygame.display.set_caption('Pentago')
 render()
+
 
 while running:
     event = pygame.event.wait()
@@ -259,6 +268,10 @@ while running:
             pose_pion(pygame.mouse.get_pos(), PLAYER)
         elif STEP == 2:
             click_arrows(pygame.mouse.get_pos())
+    if event.type == pygame.MOUSEMOTION:
+        mouse_pos = event.pos
+        render()
     if event.type == pygame.QUIT:
         running = False
+    clock.tick(FPS)
 pygame.quit()
