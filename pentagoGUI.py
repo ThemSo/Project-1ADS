@@ -17,7 +17,10 @@ def render(rotation):
     draw_plateau(plateau, rotation)
     if STEP == 1 and not animation:
         screen.blit(img[PLAYER], pygame.rect.Rect(mouse_pos[0]-15, mouse_pos[1]-15, 30, 30))
-    draw_button_reset()
+    if screen_size[1] <= mouse_pos[0] <= screen_size[1]+250-padding_step_1 and padding_step_1 <= mouse_pos[1] <= padding_step_1+45:
+        draw_button_reset(1)
+    else:
+        draw_button_reset(0)
     pygame.display.flip()
 
 
@@ -276,6 +279,8 @@ def pos_click_plateau(pos):
 def resize_plateau(start, end_value, duration):
     global padding
     global animation
+    global mouse_pos
+    mouse_pos = (-100, -100)
     start_value = padding
     current_time = time.time()*1000
     animation = True
@@ -289,6 +294,8 @@ def resize_plateau(start, end_value, duration):
 def rotate_cadrant(start, cadrant, end_value, duration):
     global padding
     global animation
+    global mouse_pos
+    mouse_pos = (-100, -100)
     start_value = 0
     current_time = time.time()*1000
     animation = True
@@ -330,19 +337,23 @@ def load():
                         columns = len(plateau)
         file.close()
 
+
 def new_game():
-    global plateau
-    global columns
-    global STEP
     global PLAYER
-    if os.path.isfile("cache"):
-        file = open("cache","w")
-        file.write("")
-        file.close()
+    global plateau
+    global STEP
+    global columns
+
+    file = open("cache", "w")
+    file.write("")
+    file.close()
+
     STEP = 1
+    PLAYER = 1 if PLAYER == 2 else 2
     plateau = bases(columns)
-    PLAYER = 1
-    
+    render((0, 0))
+    if padding != padding_step_1:
+        resize_plateau(time.time()*1000, padding_step_1-padding_step_2, 600)
 
 
 def pose_pion(mouse_pos, player):
@@ -358,8 +369,8 @@ def pose_pion(mouse_pos, player):
         save()
 
 
-def draw_button_reset():
-    screen.blit(img_button_reset, (screen_size[1], padding_step_1))
+def draw_button_reset(x):
+    screen.blit(img_button_reset[x], (screen_size[1], padding_step_1))
 
 
 running = True
@@ -388,7 +399,7 @@ screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
 clock = pygame.time.Clock()
 img = [pygame.image.load('img/0.png'), pygame.image.load('img/1.png'), pygame.image.load('img/2.png')]
 img_arrow = pygame.image.load('img/arrow.png')
-img_button_reset = pygame.image.load('img/button_reset.png')
+img_button_reset = [pygame.image.load('img/button_reset.png'), pygame.image.load('img/button_reset_hover.png')]
 sound = [pygame.mixer.Sound("drop.wav")]
 pygame.display.set_caption('Pentago')
 render((0, 0))
@@ -397,7 +408,8 @@ render((0, 0))
 while running:
     event = pygame.event.wait()
     if event.type == pygame.MOUSEBUTTONUP:
-        if pygame.mouse.get_pos()[0] >= screen_size[1] and pygame.mouse.get_pos()[1] >= padding_step_1 and pygame.mouse.get_pos()[0] <= screen_size[1]+250-padding_step_1 and pygame.mouse.get_pos()[1] <= padding_step_1+45:
+        if screen_size[1] <= pygame.mouse.get_pos()[0] <= screen_size[1]+250-padding_step_1 and padding_step_1 <= pygame.mouse.get_pos()[1] <= padding_step_1+45:
+            sound[0].play()
             new_game()
         if STEP == 1:
             pose_pion(pygame.mouse.get_pos(), PLAYER)
