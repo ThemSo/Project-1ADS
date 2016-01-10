@@ -80,6 +80,7 @@ def click_arrows(mouse_pos):
     rotation = False
     cadrant = 1
     if padding_step_2+30 >= x >= padding_step_2 >= y >= padding_step_2-30:
+        cadrant = 1
         rotation = True
         action = True
     elif padding_step_2+height >= x >= padding_step_2+height-30 and padding_step_2 >= y >= padding_step_2-30:
@@ -104,6 +105,8 @@ def click_arrows(mouse_pos):
         rotation = True
         action = True
     elif padding_step_2+30 >= y >= padding_step_2 >= x >= padding_step_2-30:
+        cadrant = 1
+        rotation = False
         action = True
 
     if action:
@@ -116,7 +119,7 @@ def click_arrows(mouse_pos):
         else:
             angle = -90
         rotate_cadrant(time.time()*1000, cadrant, angle, 1000)
-        plateau = rotation_plateau(plateau, columns, cadrant, action)
+        plateau = rotation_plateau(plateau, columns, cadrant, rotation)
         resize_plateau(time.time()*1000, padding_step_1-padding_step_2, 600)
         save()
 
