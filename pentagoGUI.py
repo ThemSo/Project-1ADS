@@ -6,8 +6,8 @@ import time
 
 
 def bases(n):
-    plateau = [[0 for i in range(n)] for i in range(n)]
-    return plateau
+    tmp = [[0 for i in range(n)] for i in range(n)]
+    return tmp
 
 
 def render(rotation):
@@ -28,7 +28,7 @@ def render(rotation):
 #
 # rotation d'un plateau
 # rotation_plateau(liste, nombre_de_ligne, numero_du_cote, True = horaire et False = antihoraire)
-def rotation_plateau(plateau, m, n, sens):
+def rotation_plateau(plateau_tmp, m, n, sens):
     x, y, maxx, maxy = 0, 0, m//2, m//2
 
     if n % 2 == 0:
@@ -43,17 +43,17 @@ def rotation_plateau(plateau, m, n, sens):
         tmpx = maxx
         while tmpx > x:
             if not sens:
-                tmp[maxy-tmpy][tmpx-x-1] = plateau[tmpx-1][tmpy-1]
+                tmp[maxy-tmpy][tmpx-x-1] = plateau_tmp[tmpx-1][tmpy-1]
             else:
-                tmp[tmpy-y-1][maxx-tmpx] = plateau[tmpx-1][tmpy-1]
+                tmp[tmpy-y-1][maxx-tmpx] = plateau_tmp[tmpx-1][tmpy-1]
             tmpx -= 1
         tmpy -= 1
 
     for nx, vx in enumerate(tmp):
         for ny, vy in enumerate(vx):
-            plateau[nx+x][ny+y] = vy
+            plateau_tmp[nx+x][ny+y] = vy
 
-    return plateau
+    return plateau_tmp
 
 
 def draw_arrow():
@@ -80,38 +80,30 @@ def click_arrows(mouse_pos):
     rotation = False
     cadrant = 1
     if padding_step_2+30 >= x >= padding_step_2 >= y >= padding_step_2-30:
-        plateau = rotation_plateau(plateau, columns, 1, True)
         rotation = True
         action = True
     elif padding_step_2+height >= x >= padding_step_2+height-30 and padding_step_2 >= y >= padding_step_2-30:
-        plateau = rotation_plateau(plateau, columns, 3, False)
         cadrant = 3
         action = True
     elif padding_step_2+height+30 >= x >= padding_step_2+height and padding_step_2+30 >= y >= padding_step_2:
-        plateau = rotation_plateau(plateau, columns, 3, True)
         cadrant = 3
         rotation = True
         action = True
     elif padding_step_2+height+30 >= x >= padding_step_2+height >= y >= padding_step_2+height-30:
-        plateau = rotation_plateau(plateau, columns, 4, False)
         cadrant = 4
         action = True
     elif padding_step_2+height+30 >= y >= padding_step_2+height >= x >= padding_step_2+height-30:
-        plateau = rotation_plateau(plateau, columns, 4, True)
         cadrant = 4
         rotation = True
         action = True
     elif padding_step_2+30 >= x >= padding_step_2 and padding_step_2+height+30 >= y >= padding_step_2+height:
-        plateau = rotation_plateau(plateau, columns, 2, False)
         cadrant = 2
         action = True
     elif padding_step_2 >= x >= padding_step_2-30 and padding_step_2+height >= y >= padding_step_2+height-30:
-        plateau = rotation_plateau(plateau, columns, 2, True)
         cadrant = 2
         rotation = True
         action = True
     elif padding_step_2+30 >= y >= padding_step_2 >= x >= padding_step_2-30:
-        plateau = rotation_plateau(plateau, columns, 1, False)
         action = True
 
     if action:
@@ -124,6 +116,7 @@ def click_arrows(mouse_pos):
         else:
             angle = -90
         rotate_cadrant(time.time()*1000, cadrant, angle, 1000)
+        plateau = rotation_plateau(plateau, columns, cadrant, action)
         resize_plateau(time.time()*1000, padding_step_1-padding_step_2, 600)
         save()
 
@@ -224,8 +217,24 @@ def draw_plateau(plateau, rotate):
                 addy = -GUTTER//4
             else:
                 addy = GUTTER//4
+
             draw_x = ((ix*height_square)+padding+addx)+(height_square-30)/2
             draw_y = ((iy*height_square)+padding+addy)+(height_square-30)/2
+
+            if rotate[1] != 0 and rotate[0] != 0:
+                pos_pion = 1
+                #  ___
+                # |1|3|
+                # |2|4|
+                #  ---
+                if ix >= (len(y)+1)//2:
+                    pos_pion += 2
+                if iy >= (len(y)+1)//2:
+                    pos_pion += 1
+                if pos_pion == rotate[0]:
+                    new_pos_pion = point_rotate(cx, cy, draw_x+15, draw_y+15, rotate[1])
+                    draw_x = new_pos_pion[0]-15
+                    draw_y = new_pos_pion[1]-15
 
             screen.blit(img[x], (draw_x, draw_y))
 
