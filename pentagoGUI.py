@@ -18,6 +18,7 @@ def render(rotation):
     if STEP == 1 and not animation:
         screen.blit(img[PLAYER], pygame.rect.Rect(mouse_pos[0]-15, mouse_pos[1]-15, 30, 30))
     draw_button_reset()
+    txt_new_game()
     pygame.display.flip()
 
 
@@ -343,6 +344,14 @@ def pose_pion(mouse_pos, player):
 
 def draw_button_reset():
         pygame.draw.rect(screen, RED, (550,25,200,50),0)
+
+def txt_new_game():
+    font = pygame.font.Font(None, 36)
+    text = font.render("Nouvelle partie", 1, (10, 10, 10))
+    textpos = text.get_rect()
+    textpos.centerx = screen.get_rect().centerx+247
+    textpos.centery = screen.get_rect().centery-200
+    screen.blit(text, textpos)
 
 running = True
 RED = (152, 0, 0)
