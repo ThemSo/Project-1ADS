@@ -10,11 +10,11 @@ def bases(n):
     return plateau
 
 
-def render():
+def render(rotation):
     screen.fill(BLACK)
     if STEP == 2:
         draw_arrow()
-    draw_plateau(plateau)
+    draw_plateau(plateau, rotation)
     if STEP == 1 and not animation:
         screen.blit(img[PLAYER], pygame.rect.Rect(mouse_pos[0]-15, mouse_pos[1]-15, 30, 30))
     pygame.display.flip()
@@ -65,7 +65,6 @@ def draw_arrow():
     screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 90), True, False), (padding_step_2+height, padding_step_2+height-30))
     screen.blit(pygame.transform.flip(img_arrow, True, True), (padding_step_2+height-30, padding_step_2+height))
     screen.blit(pygame.transform.flip(img_arrow, False, True), (padding_step_2, padding_step_2+height))
-
     screen.blit(pygame.transform.rotate(img_arrow, 90), (padding_step_2-30, padding_step_2+height-30))
     screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 90), False, True), (padding_step_2-30, padding_step_2))
 
@@ -78,26 +77,38 @@ def click_arrows(mouse_pos):
     height = screen_size[1]-(padding_step_2*2)
     x, y = mouse_pos[0], mouse_pos[1]
     action = False
+    rotation = False
+    cadrant = 1
     if padding_step_2+30 >= x >= padding_step_2 >= y >= padding_step_2-30:
         plateau = rotation_plateau(plateau, columns, 1, True)
+        rotation = True
         action = True
     elif padding_step_2+height >= x >= padding_step_2+height-30 and padding_step_2 >= y >= padding_step_2-30:
         plateau = rotation_plateau(plateau, columns, 3, False)
+        cadrant = 3
         action = True
     elif padding_step_2+height+30 >= x >= padding_step_2+height and padding_step_2+30 >= y >= padding_step_2:
         plateau = rotation_plateau(plateau, columns, 3, True)
+        cadrant = 3
+        rotation = True
         action = True
     elif padding_step_2+height+30 >= x >= padding_step_2+height >= y >= padding_step_2+height-30:
         plateau = rotation_plateau(plateau, columns, 4, False)
+        cadrant = 4
         action = True
     elif padding_step_2+height+30 >= y >= padding_step_2+height >= x >= padding_step_2+height-30:
         plateau = rotation_plateau(plateau, columns, 4, True)
+        cadrant = 4
+        rotation = True
         action = True
     elif padding_step_2+30 >= x >= padding_step_2 and padding_step_2+height+30 >= y >= padding_step_2+height:
         plateau = rotation_plateau(plateau, columns, 2, False)
+        cadrant = 2
         action = True
     elif padding_step_2 >= x >= padding_step_2-30 and padding_step_2+height >= y >= padding_step_2+height-30:
         plateau = rotation_plateau(plateau, columns, 2, True)
+        cadrant = 2
+        rotation = True
         action = True
     elif padding_step_2+30 >= y >= padding_step_2 >= x >= padding_step_2-30:
         plateau = rotation_plateau(plateau, columns, 1, False)
@@ -105,21 +116,101 @@ def click_arrows(mouse_pos):
 
     if action:
         sound[0].play()
-        render()
+        render((0, 0))
         STEP = 1
         PLAYER = 1 if PLAYER == 2 else 2
+        if rotation:
+            angle = 90
+        else:
+            angle = -90
+        rotate_cadrant(time.time()*1000, cadrant, angle, 1000)
         resize_plateau(time.time()*1000, padding_step_1-padding_step_2, 600)
         save()
 
 
-def draw_plateau(plateau):
+# position d'un point après rotation
+def point_rotate(cx, cy, x, y, angle):
+    radians = (math.pi / 180) * -angle
+    cos = math.cos(radians)
+    sin = math.sin(radians)
+    nx = (cos * (x - cx)) + (sin * (y - cy)) + cx
+    ny = (cos * (y - cy)) - (sin * (x - cx)) + cy
+    return nx, ny
+
+
+def draw_plateau(plateau, rotate):
     height = screen_size[1]
     height_cadrant = round((height-padding*2)/2)
     mid_GUTTER = round(GUTTER/2)
-    pygame.draw.rect(screen, RED, (padding, padding, height_cadrant-mid_GUTTER, height_cadrant-mid_GUTTER), 0)
-    pygame.draw.rect(screen, RED, (padding+height_cadrant+mid_GUTTER, padding, height_cadrant-mid_GUTTER, height_cadrant-mid_GUTTER), 0)
-    pygame.draw.rect(screen, RED, (padding+height_cadrant+mid_GUTTER, padding+height_cadrant+mid_GUTTER, height_cadrant-mid_GUTTER, height_cadrant-mid_GUTTER), 0)
-    pygame.draw.rect(screen, RED, (padding, padding+height_cadrant+mid_GUTTER, height_cadrant-mid_GUTTER, height_cadrant-mid_GUTTER), 0)
+
+    if rotate[0] == 1 and rotate[1] != 0:
+        cx, cy = padding+((height_cadrant-mid_GUTTER)//2), padding+((height_cadrant-mid_GUTTER)//2)
+        pos_cadrant = (
+            point_rotate(cx, cy, padding, padding, rotate[1]),
+            point_rotate(cx, cy, padding+height_cadrant-mid_GUTTER, padding, rotate[1]),
+            point_rotate(cx, cy, padding+height_cadrant-mid_GUTTER, padding+height_cadrant-mid_GUTTER, rotate[1]),
+            point_rotate(cx, cy, padding, padding+height_cadrant-mid_GUTTER, rotate[1])
+        )
+    else:
+        pos_cadrant = (
+            (padding, padding),
+            (padding+height_cadrant-mid_GUTTER, padding),
+            (padding+height_cadrant-mid_GUTTER, padding+height_cadrant-mid_GUTTER),
+            (padding, padding+height_cadrant-mid_GUTTER)
+        )
+    pygame.draw.polygon(screen, RED, pos_cadrant)
+
+    if rotate[0] == 3 and rotate[1] != 0:
+        cx, cy = padding+height_cadrant+((height_cadrant+mid_GUTTER)//2), padding+((height_cadrant-mid_GUTTER)//2)
+        pos_cadrant = (
+            point_rotate(cx, cy, padding+height_cadrant+mid_GUTTER, padding, rotate[1]),
+            point_rotate(cx, cy, padding+height_cadrant+height_cadrant, padding, rotate[1]),
+            point_rotate(cx, cy, padding+height_cadrant+height_cadrant, padding+height_cadrant-mid_GUTTER, rotate[1]),
+            point_rotate(cx, cy, padding+height_cadrant+mid_GUTTER, padding+height_cadrant-mid_GUTTER, rotate[1])
+        )
+    else:
+        pos_cadrant = (
+            (padding+height_cadrant+mid_GUTTER, padding),
+            (padding+height_cadrant+mid_GUTTER+height_cadrant-mid_GUTTER, padding),
+            (padding+height_cadrant+mid_GUTTER+height_cadrant-mid_GUTTER, padding+height_cadrant-mid_GUTTER),
+            (padding+height_cadrant+mid_GUTTER, padding+height_cadrant-mid_GUTTER)
+        )
+    pygame.draw.polygon(screen, RED, pos_cadrant)
+
+    if rotate[0] == 4 and rotate[1] != 0:
+        cx, cy = padding+height_cadrant+((height_cadrant+mid_GUTTER)//2), padding+height_cadrant+((height_cadrant+mid_GUTTER)//2)
+        pos_cadrant = (
+            point_rotate(cx, cy, padding+height_cadrant+mid_GUTTER, padding+height_cadrant+mid_GUTTER, rotate[1]),
+            point_rotate(cx, cy, padding+height_cadrant+mid_GUTTER+height_cadrant-mid_GUTTER, padding+height_cadrant+mid_GUTTER, rotate[1]),
+            point_rotate(cx, cy, padding+height_cadrant+mid_GUTTER+height_cadrant-mid_GUTTER, padding+height_cadrant+mid_GUTTER+height_cadrant-mid_GUTTER, rotate[1]),
+            point_rotate(cx, cy, padding+height_cadrant+mid_GUTTER, padding+height_cadrant+mid_GUTTER+height_cadrant-mid_GUTTER, rotate[1])
+        )
+    else:
+        pos_cadrant = (
+            (padding+height_cadrant+mid_GUTTER, padding+height_cadrant+mid_GUTTER),
+            (padding+height_cadrant+mid_GUTTER+height_cadrant-mid_GUTTER, padding+height_cadrant+mid_GUTTER),
+            (padding+height_cadrant+mid_GUTTER+height_cadrant-mid_GUTTER, padding+height_cadrant+mid_GUTTER+height_cadrant-mid_GUTTER),
+            (padding+height_cadrant+mid_GUTTER, padding+height_cadrant+mid_GUTTER+height_cadrant-mid_GUTTER)
+        )
+    pygame.draw.polygon(screen, RED, pos_cadrant)
+
+    if rotate[0] == 2 and rotate[1] != 0:
+        cx, cy = padding+((height_cadrant-mid_GUTTER)//2), padding+height_cadrant+((height_cadrant+mid_GUTTER)//2)
+        pos_cadrant = (
+            point_rotate(cx, cy, padding, padding+height_cadrant+mid_GUTTER, rotate[1]),
+            point_rotate(cx, cy, padding+height_cadrant-mid_GUTTER, padding+height_cadrant+mid_GUTTER, rotate[1]),
+            point_rotate(cx, cy, padding+height_cadrant-mid_GUTTER, padding+height_cadrant+mid_GUTTER+height_cadrant-mid_GUTTER, rotate[1]),
+            point_rotate(cx, cy, padding, padding+height_cadrant+mid_GUTTER+height_cadrant-mid_GUTTER, rotate[1])
+        )
+    else:
+        pos_cadrant = (
+            (padding, padding+height_cadrant+mid_GUTTER),
+            (padding+height_cadrant-mid_GUTTER, padding+height_cadrant+mid_GUTTER),
+            (padding+height_cadrant-mid_GUTTER, padding+height_cadrant+mid_GUTTER+height_cadrant-mid_GUTTER),
+            (padding, padding+height_cadrant+mid_GUTTER+height_cadrant-mid_GUTTER)
+        )
+    pygame.draw.polygon(screen, RED, pos_cadrant)
+
     height_square = ((height-(padding*2))/len(plateau))
     for iy, y in enumerate(plateau):
         for ix, x in enumerate(y):
@@ -178,10 +269,20 @@ def resize_plateau(start, end_value, duration):
     while current_time-start <= duration:
         current_time = time.time()*1000
         padding = round(ease(current_time-start, start_value, end_value, duration))
-        render()
-        clock.tick(FPS)
+        render((0, 0))
     animation = False
-    render()
+
+
+def rotate_cadrant(start, cadrant, end_value, duration):
+    global padding
+    global animation
+    start_value = 0
+    current_time = time.time()*1000
+    animation = True
+    while current_time-start <= duration:
+        current_time = time.time()*1000
+        render((cadrant, round(ease(current_time-start, start_value, end_value, duration))))
+    animation = False
 
 
 # t: temps actuel, b: valeur de depart, c: valeur finale, d: duree
@@ -223,7 +324,6 @@ def pose_pion(mouse_pos, player):
         global STEP
         sound[0].play()
         plateau[y][x] = player
-        render()
         STEP = 2
         resize_plateau(time.time()*1000, padding_step_2-padding_step_1, 600)
         save()
@@ -234,7 +334,6 @@ RED = (152, 0, 0)
 DARK_RED = (131, 0, 0)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-FPS = 60
 GUTTER = 8
 PLAYER = 1
 STEP = 1
@@ -258,17 +357,7 @@ img = [pygame.image.load('img/0.png'), pygame.image.load('img/1.png'), pygame.im
 img_arrow = pygame.image.load('img/arrow.png')
 sound = [pygame.mixer.Sound("drop.wav")]
 pygame.display.set_caption('Pentago')
-render()
-
-
-# position d'un point après rotation
-def point_rotate(cx, cy, x, y, angle):
-    radians = (math.pi / 180) * -angle
-    cos = math.cos(radians)
-    sin = math.sin(radians)
-    nx = (cos * (x - cx)) + (sin * (y - cy)) + cx
-    ny = (cos * (y - cy)) - (sin * (x - cx)) + cy
-    return nx, ny
+render((0, 0))
 
 
 while running:
@@ -280,8 +369,7 @@ while running:
             click_arrows(pygame.mouse.get_pos())
     if event.type == pygame.MOUSEMOTION:
         mouse_pos = event.pos
-        render()
+    render((0, 0))
     if event.type == pygame.QUIT:
         running = False
-    clock.tick(FPS)
 pygame.quit()
