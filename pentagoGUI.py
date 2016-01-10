@@ -388,6 +388,8 @@ render((0, 0))
 while running:
     event = pygame.event.wait()
     if event.type == pygame.MOUSEBUTTONUP:
+        if pygame.mouse.get_pos()[0] >= screen_size[1] and pygame.mouse.get_pos()[1] >= padding_step_1 and pygame.mouse.get_pos()[0] <= screen_size[1]+250-padding_step_1 and pygame.mouse.get_pos()[1] <= padding_step_1+45:
+            print("Yahaaa")
         if STEP == 1:
             pose_pion(pygame.mouse.get_pos(), PLAYER)
         elif STEP == 2:
