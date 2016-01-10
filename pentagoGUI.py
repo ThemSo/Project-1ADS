@@ -18,7 +18,6 @@ def render(rotation):
     if STEP == 1 and not animation:
         screen.blit(img[PLAYER], pygame.rect.Rect(mouse_pos[0]-15, mouse_pos[1]-15, 30, 30))
     draw_button_reset()
-    txt_new_game()
     pygame.display.flip()
 
 
@@ -353,6 +352,16 @@ def txt_new_game():
     textpos.centery = screen.get_rect().centery-200
     screen.blit(text, textpos)
 
+def draw_button_reset():
+    pygame.draw.rect(screen, RED, (550,25,200,50),0)
+    font = pygame.font.Font(None, 36)
+    text = font.render("Nouvelle partie", 1, (10, 10, 10))
+    textpos = text.get_rect()
+    textpos.centerx = screen.get_rect().centerx+247
+    textpos.centery = screen.get_rect().centery-200
+    screen.blit(text, textpos)
+
+
 running = True
 RED = (152, 0, 0)
 DARK_RED = (131, 0, 0)
@@ -374,8 +383,8 @@ else:
     padding = padding_step_1
 
 pygame.init()
-screen_size = (800, 500)
-screen = pygame.display.set_mode(screen_size)
+screen_size = (800, 550)
+screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
 clock = pygame.time.Clock()
 img = [pygame.image.load('img/0.png'), pygame.image.load('img/1.png'), pygame.image.load('img/2.png')]
 img_arrow = pygame.image.load('img/arrow.png')
@@ -393,6 +402,9 @@ while running:
             click_arrows(pygame.mouse.get_pos())
     if event.type == pygame.MOUSEMOTION:
         mouse_pos = event.pos
+    if event.type == pygame.VIDEORESIZE:
+        screen_size = (round(event.size[1]+250), round(event.size[1]))
+        screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
     render((0, 0))
     if event.type == pygame.QUIT:
         running = False
