@@ -15,7 +15,7 @@ def render():
         draw_arrow()
     draw_plateau(plateau)
     if STEP == 1 and not animation:
-        screen.blit(img_cursor[PLAYER-1], pygame.rect.Rect(mouse_pos[0]-15, mouse_pos[1]-15, 30, 30))
+        screen.blit(img[PLAYER], pygame.rect.Rect(mouse_pos[0]-15, mouse_pos[1]-15, 30, 30))
     pygame.display.flip()
 
 
@@ -254,7 +254,6 @@ screen_size = (800, 500)
 screen = pygame.display.set_mode(screen_size)
 clock = pygame.time.Clock()
 img = [pygame.image.load('img/0.png'), pygame.image.load('img/1.png'), pygame.image.load('img/2.png')]
-img_cursor = [pygame.image.load('img/cursor1.png'), pygame.image.load('img/cursor2.png')]
 img_arrow = pygame.image.load('img/arrow.png')
 sound = [pygame.mixer.Sound("drop.wav")]
 pygame.display.set_caption('Pentago')
