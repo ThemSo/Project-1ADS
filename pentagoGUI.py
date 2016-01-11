@@ -21,6 +21,7 @@ def render(rotation):
         draw_button_reset(1)
     else:
         draw_button_reset(0)
+    who_play()
     pygame.display.flip()
 
 
@@ -372,6 +373,8 @@ def pose_pion(mouse_pos, player):
 def draw_button_reset(x):
     screen.blit(img_button_reset[x], (screen_size[1], padding_step_1+146))
 
+def who_play():
+    screen.blit(img_turn[PLAYER-1],(screen_size[1],padding_step_1))
 
 running = True
 RED = (152, 0, 0)
@@ -400,6 +403,7 @@ clock = pygame.time.Clock()
 img = [pygame.image.load('img/0.png'), pygame.image.load('img/1.png'), pygame.image.load('img/2.png')]
 img_arrow = pygame.image.load('img/arrow.png')
 img_button_reset = [pygame.image.load('img/button_reset.png'), pygame.image.load('img/button_reset_hover.png')]
+img_turn = [pygame.image.load('img/turn1.png'), pygame.image.load('img/turn2.png')]
 sound = [pygame.mixer.Sound("drop.wav")]
 pygame.display.set_caption('Pentago')
 render((0, 0))
