@@ -118,7 +118,6 @@ def click_arrows(mouse_pos):
         sound[0].play()
         render((0, 0))
         STEP = 1
-        PLAYER = 1 if PLAYER == 2 else 2
         if rotation:
             angle = 90
         else:
@@ -129,7 +128,8 @@ def click_arrows(mouse_pos):
         save()
         if test_win(columns,plateau,nbr_pion,PLAYER):
             STEP = 3
-
+        else:
+            PLAYER = 1 if PLAYER == 2 else 2
 
 # position d'un point après rotation
 def point_rotate(cx, cy, x, y, angle):
@@ -460,7 +460,7 @@ STEP = 1
 padding_step_1 = 8
 padding_step_2 = 45
 columns = 6
-nbr_pion = 5
+nbr_pion = 3
 mouse_pos = (0, 0)
 animation = False
 plateau = bases(columns)
