@@ -17,7 +17,7 @@ def render(rotation):
     draw_plateau(plateau, rotation)
     if STEP == 1 and not animation:
         screen.blit(img[PLAYER], pygame.rect.Rect(mouse_pos[0]-15, mouse_pos[1]-15, 30, 30))
-    if screen_size[1] <= mouse_pos[0] <= screen_size[1]+250-padding_step_1 and padding_step_1+146 <= mouse_pos[1] <= padding_step_1+45+146:
+    if screen_size[1] <= mouse_pos[0] <= screen_size[1]+250-padding_step_1 and padding_step_1+146+padding_step_1 <= mouse_pos[1] <= padding_step_1+45+146+padding_step_1:
         draw_button_reset(1)
     else:
         draw_button_reset(0)
@@ -381,7 +381,7 @@ def pose_pion(mouse_pos, player):
 
 
 def draw_button_reset(x):
-    screen.blit(img_button_reset[x], (screen_size[1], padding_step_1+146))
+    screen.blit(img_button_reset[x], (screen_size[1], padding_step_1+146+padding_step_1))
 
 def who_play():
     screen.blit(img_turn[PLAYER-1],(screen_size[1],padding_step_1))
@@ -486,7 +486,7 @@ render((0, 0))
 while running:
     event = pygame.event.wait()
     if event.type == pygame.MOUSEBUTTONUP:
-        if screen_size[1] <= pygame.mouse.get_pos()[0] <= screen_size[1]+250-padding_step_1 and padding_step_1+146 <= pygame.mouse.get_pos()[1] <= padding_step_1+146+45:
+        if screen_size[1] <= pygame.mouse.get_pos()[0] <= screen_size[1]+250-padding_step_1 and padding_step_1+146+padding_step_1 <= pygame.mouse.get_pos()[1] <= padding_step_1+146+45+padding_step_1:
             sound[0].play()
             new_game()
         if STEP == 1:
