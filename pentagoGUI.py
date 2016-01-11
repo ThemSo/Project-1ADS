@@ -353,7 +353,7 @@ def new_game():
     plateau = bases(columns)
     render((0, 0))
     if padding != padding_step_1:
-        resize_plateau(time.time()*1000, padding_step_1-padding_step_2, 600)
+        resize_plateau(time.time()*1000, padding_step_1-padding_step_2, 300)
 
 
 def pose_pion(mouse_pos, player):
