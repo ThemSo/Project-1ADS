@@ -17,7 +17,7 @@ def render(rotation):
     draw_plateau(plateau, rotation)
     if STEP == 1 and not animation:
         screen.blit(img[PLAYER], pygame.rect.Rect(mouse_pos[0]-15, mouse_pos[1]-15, 30, 30))
-    if screen_size[1] <= mouse_pos[0] <= screen_size[1]+250-padding_step_1 and padding_step_1+146+padding_step_1 <= mouse_pos[1] <= padding_step_1+45+146+padding_step_1:
+    if screen_size[1] <= mouse_pos[0] <= screen_size[1]+250-padding_step_1 and padding_step_1+146 <= mouse_pos[1] <= padding_step_1+45+146:
         draw_button_reset(1)
     else:
         draw_button_reset(0)
@@ -127,6 +127,8 @@ def click_arrows(mouse_pos):
         plateau = rotation_plateau(plateau, columns, cadrant, rotation)
         resize_plateau(time.time()*1000, padding_step_1-padding_step_2, 600)
         save()
+        if test_win(columns,plateau,nbr_pion,PLAYER):
+            STEP = 3
 
 
 # position d'un point après rotation
@@ -368,13 +370,84 @@ def pose_pion(mouse_pos, player):
         STEP = 2
         resize_plateau(time.time()*1000, padding_step_2-padding_step_1, 600)
         save()
+    if test_win(columns,plateau,nbr_pion, player):
+        STEP = 3
+
+# n = (int) nombre de colonnes
+# l = (list) plateau
+# p = (int) nombre de valeur identique à aligner pour une victoire
+# j = (int) 1 pour le joueur 1, 2 pour le joueur 2
+
 
 
 def draw_button_reset(x):
-    screen.blit(img_button_reset[x], (screen_size[1], padding_step_1+146+padding_step_1))
+    screen.blit(img_button_reset[x], (screen_size[1], padding_step_1+146))
 
 def who_play():
     screen.blit(img_turn[PLAYER-1],(screen_size[1],padding_step_1))
+
+def victory_horizontal(n, l, p, j):
+    for y in range(n):
+        v = 0
+        for x in range(n):
+            if l[y][x] == j:
+                v += 1
+            else:
+                v = 0
+            if v >= p:
+                return True
+    return False
+
+
+def victory_vertical(n, l, p, j):
+    for x in range(n):
+        v = 0
+        for y in range(n):
+            if l[y][x] == j:
+                v += 1
+            else:
+                v = 0
+            if v >= p:
+                return True
+    return False
+
+
+def victory_diagonal1(n, l, p, j):
+    for i in range(n*2):
+        x, y, v = i, 0, 0
+        while x >= 0 and y < n:
+            if n > y >= 0 and n > x >= 0:
+                if l[y][x] == j:
+                    v += 1
+                else:
+                    v = 0
+                if v >= p:
+                    return True
+            x -= 1
+            y += 1
+    return False
+
+
+def victory_diagonal2(n, l, p, j):
+    for i in range(n*2):
+        x, y, v = i, n-1, 0
+        while x >= 0 and y >= 0:
+            if n > y >= 0 and n > x >= 0:
+                if l[y][x] == j:
+                    v += 1
+                else:
+                    v = 0
+                if v >= p:
+                    return True
+            x -= 1
+            y -= 1
+    return False
+
+def test_win(n, l, p, j):
+    if victory_horizontal(n, l, p, j) or victory_vertical(n, l, p, j) or victory_diagonal1(n, l, p, j) or victory_diagonal2(n, l, p, j):
+        return True
+    return False
+
 
 running = True
 RED = (152, 0, 0)
@@ -387,6 +460,7 @@ STEP = 1
 padding_step_1 = 8
 padding_step_2 = 45
 columns = 6
+nbr_pion = 5
 mouse_pos = (0, 0)
 animation = False
 plateau = bases(columns)
@@ -412,7 +486,7 @@ render((0, 0))
 while running:
     event = pygame.event.wait()
     if event.type == pygame.MOUSEBUTTONUP:
-        if screen_size[1] <= pygame.mouse.get_pos()[0] <= screen_size[1]+250-padding_step_1 and padding_step_1+146+padding_step_1 <= pygame.mouse.get_pos()[1] <= padding_step_1+146+45+padding_step_1:
+        if screen_size[1] <= pygame.mouse.get_pos()[0] <= screen_size[1]+250-padding_step_1 and padding_step_1+146 <= pygame.mouse.get_pos()[1] <= padding_step_1+146+45:
             sound[0].play()
             new_game()
         if STEP == 1:
