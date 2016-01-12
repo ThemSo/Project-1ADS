@@ -4,16 +4,14 @@ import math
 import json
 import time
 
+
 # retourne une liste bi-dimensionnelle de n*n
-
-
 def bases(n):
     tmp = [[0 for i in range(n)] for i in range(n)]
     return tmp
 
+
 # rassemble les fonctions qui affichent des choses à l'écran
-
-
 def render(rotation):
     screen.fill(BLACK)
     if STEP == 2:
@@ -68,9 +66,8 @@ def rotation_plateau(plateau_tmp, m, n, sens):
 
     return plateau_tmp
 
+
 # dessine les flèches permettant la rotation d'un cadrant
-
-
 def draw_arrow():
     height = screen_size[1] - (padding_step_2 * 2)
     screen.blit(img_arrow, (padding_step_2, padding_step_2 - 30))
@@ -89,9 +86,8 @@ def draw_arrow():
     screen.blit(pygame.transform.flip(pygame.transform.rotate(
         img_arrow, 90), False, True), (padding_step_2 - 30, padding_step_2))
 
+
 # tourne un cadrant lors d'un clique sur une flèche
-
-
 def click_arrows(mouse_pos):
     global plateau
     global columns
@@ -462,11 +458,13 @@ def pose_pion(mouse_pos, player):
         STEP = 3
 
 
+# dessine le bouton "nouvelle partie"
 def draw_button_reset(x):
     screen.blit(img_button_reset[x], (screen_size[
                 1], padding_step_1 + 146 + padding_step_1))
 
 
+# dessine l'indication permettant de savoir qui doit jouer
 def who_play():
     screen.blit(img_turn[PLAYER - 1], (screen_size[1], padding_step_1))
 
