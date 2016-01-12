@@ -12,6 +12,7 @@ plateau = [
 # p = (int) nombre de valeur identique à aligner pour une victoire
 # j = (int) 1 pour le joueur 1, 2 pour le joueur 2
 
+
 # |
 def victory_horizontal(n, l, p, j):
     for y in range(n):
@@ -25,6 +26,7 @@ def victory_horizontal(n, l, p, j):
                 return True
     return False
 
+
 # __
 def victory_vertical(n, l, p, j):
     for x in range(n):
@@ -37,6 +39,7 @@ def victory_vertical(n, l, p, j):
             if v >= p:
                 return True
     return False
+
 
 # /
 def victory_diagonal1(n, l, p, j):
@@ -54,6 +57,7 @@ def victory_diagonal1(n, l, p, j):
             y += 1
     return False
 
+
 # \
 def victory_diagonal2(n, l, p, j):
     for i in range(n*2):
@@ -69,6 +73,7 @@ def victory_diagonal2(n, l, p, j):
             x -= 1
             y -= 1
     return False
+
 
 def test_win(n, l, p, j):
     if victory_horizontal(n, l, p, j) or victory_vertical(n, l, p, j) or victory_diagonal1(n, l, p, j) or victory_diagonal2(n, l, p, j):
