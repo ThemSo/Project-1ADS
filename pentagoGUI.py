@@ -499,14 +499,18 @@ def victory_diagonal2(n, l, p, j):
 
 def test_win(n, l, p, j):
     if victory_horizontal(n, l, p, j) or victory_vertical(n, l, p, j) or victory_diagonal1(n, l, p, j) or victory_diagonal2(n, l, p, j):
+        file = open("cache", "w")
+        file.write("")
+        file.close()
         if padding > padding_step_1:
-            resize_plateau(time.time() * 1000, padding_step_1 - padding_step_2, 300)
+            resize_plateau(time.time() * 1000,
+                           padding_step_1 - padding_step_2, 300)
         return True
     return False
 
 
 def animat_win():
-    screen.blit(img_win,(screen_size[1]//2-90,screen_size[1]//2-90))
+    screen.blit(img_win, (screen_size[1] // 2 - 90, screen_size[1] // 2 - 90))
 
 running = True
 RED = (152, 0, 0)
