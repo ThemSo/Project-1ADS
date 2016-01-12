@@ -552,31 +552,60 @@ def animat_win():
         # animate
 
 running = True
+
+# définition des couleurs
 RED = (152, 0, 0)
 DARK_RED = (131, 0, 0)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+
+# GUTTER = l'espace entre les cadrants
 GUTTER = 8
+
+# JOUEUR = joueur en cours par défaut
 PLAYER = 1
+
+# STEP = étape du jeu où :
+#    1 = pose d'un pion 
+#    2 = rotation d'un cadrant
+#    3 = victoire
 STEP = 1
+
+# marge autour du plateau en fonction de l'étape STEP
 padding_step_1 = 8
 padding_step_2 = 45
+
+# nombre de colonnes par defaut du plateau
 columns = 6
+
+# nombre de pion à aligner par defaut
 nbr_pion = 2
+
+# position de la souris par defaut
 mouse_pos = (0, 0)
+
+# aucunes animations en cours = False
 animation = False
+
+# définition du plateau en fonction du nombre de colonne
 plateau = bases(columns)
-reset_step = [[False, 0], [False, 0], [False, 0]]
+
+# chargement du jeu à partir du fichier "cache"
 load()
 if STEP == 2:
     padding = padding_step_2
 else:
     padding = padding_step_1
 
+# initiation du module pygame
 pygame.init()
+
+# définition de la fenètre
 screen_size = (800, 550)
 screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
-clock = pygame.time.Clock()
+pygame.display.set_caption('Pentago')
+
+# chargement des fichiers image
 img = [pygame.image.load(
     'img/0.png'), pygame.image.load('img/1.png'), pygame.image.load('img/2.png')]
 img_arrow = pygame.image.load('img/arrow.png')
@@ -585,10 +614,9 @@ img_button_reset = [pygame.image.load(
 img_turn = [pygame.image.load('img/turn1.png'),
             pygame.image.load('img/turn2.png')]
 img_win = pygame.image.load('img/win.png')
-sound = [pygame.mixer.Sound("drop.wav")]
-pygame.display.set_caption('Pentago')
-render((0, 0))
 
+# chargement des fichiers audio
+sound = [pygame.mixer.Sound("drop.wav")]
 
 while running:
     event = pygame.event.wait()
