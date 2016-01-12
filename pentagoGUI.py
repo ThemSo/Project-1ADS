@@ -4,12 +4,12 @@ import math
 import json
 import time
 
-
+# retourne une liste bi-dimensionnelle de n*n
 def bases(n):
     tmp = [[0 for i in range(n)] for i in range(n)]
     return tmp
 
-
+# rassemble les fonctions qui affichent des choses à l'écran
 def render(rotation):
     screen.fill(BLACK)
     if STEP == 2:
@@ -28,7 +28,7 @@ def render(rotation):
     pygame.display.flip()
 
 
-# numeros des cotes
+# numéros des cotés :
 #  ___
 # |1|3|
 # |2|4|
@@ -64,7 +64,7 @@ def rotation_plateau(plateau_tmp, m, n, sens):
 
     return plateau_tmp
 
-
+# dessine les flèches permettant la rotation d'un cadrant
 def draw_arrow():
     height = screen_size[1] - (padding_step_2 * 2)
     screen.blit(img_arrow, (padding_step_2, padding_step_2 - 30))
@@ -83,7 +83,7 @@ def draw_arrow():
     screen.blit(pygame.transform.flip(pygame.transform.rotate(
         img_arrow, 90), False, True), (padding_step_2 - 30, padding_step_2))
 
-
+# tourne un cadrant lors d'un clique sur une flèche
 def click_arrows(mouse_pos):
     global plateau
     global columns
@@ -143,7 +143,11 @@ def click_arrows(mouse_pos):
             PLAYER = 1 if PLAYER == 2 else 2
 
 
-# position d'un point après rotation
+# retourne la position d'un point après rotation 
+# cx = (int) position en x de l'axe de rotation
+# cy = (int) position en y de l'axe de rotation
+# x et y = (int) position en x et y du point avant rotation
+# angle = (int) angle de la rotation en degrés
 def point_rotate(cx, cy, x, y, angle):
     radians = (math.pi / 180) * -angle
     cos = math.cos(radians)
@@ -152,8 +156,11 @@ def point_rotate(cx, cy, x, y, angle):
     ny = (cos * (y - cy)) - (sin * (x - cx)) + cy
     return nx, ny
 
-
+# dessine le plateau
+# plateau = (list) list contenant les éléments du plateau
+# rotate = (tuple) cadrant à tourner lors d'une animation: (nb_cadrant, angle_en_degres)
 def draw_plateau(plateau, rotate):
+    # dessin des cadrants
     height = screen_size[1]
     height_cadrant = round((height - padding * 2) / 2)
     mid_GUTTER = round(GUTTER / 2)
@@ -258,6 +265,7 @@ def draw_plateau(plateau, rotate):
         )
     pygame.draw.polygon(screen, RED, pos_cadrant)
 
+    # dessin des pions sur les cadrants
     height_square = ((height - (padding * 2)) / len(plateau))
     for iy, y in enumerate(plateau):
         for ix, x in enumerate(y):
@@ -302,7 +310,7 @@ def draw_plateau(plateau, rotate):
 # x = pos[1]
 # et donc :
 # plateau[y][x]
-# retourne la valeur de la case cliquee
+# retourne la valeur de la case cliquée
 def pos_click_plateau(pos):
     height = screen_size[1]
     height_cadrant = round((height - padding * 2) / 2)
@@ -325,7 +333,10 @@ def pos_click_plateau(pos):
         return round(x), round(y)
     return -1, -1
 
-
+# animation du redimensionnement du plateau
+# start = (int) timestamp en millisecondes du lancement de l'animation
+# end_value = (int) valeur finale de padding
+# duration = (int) durée de l'animation en millisecondes
 def resize_plateau(start, end_value, duration):
     global padding
     global animation
@@ -341,7 +352,11 @@ def resize_plateau(start, end_value, duration):
         render((0, 0))
     animation = False
 
-
+# animation de la rotation des cadrants
+# start = (int) timestamp en millisecondes du lancement de l'animation
+# cadrant = (int entre 1 et 4) numéro du cadrant
+# end_value = (int) valeur finale de padding
+# duration = (int) durée de l'animation en millisecondes
 def rotate_cadrant(start, cadrant, end_value, duration):
     global padding
     global animation
@@ -356,20 +371,23 @@ def rotate_cadrant(start, cadrant, end_value, duration):
             (cadrant, round(ease(current_time - start, start_value, end_value, duration))))
     animation = False
 
-
-# t: temps actuel, b: valeur de depart, c: valeur finale, d: duree
+# retourne une valeur sur une courbe en demi-cloche, en fonction du temps écoulé et de deux valeurs
+# t = (int) temps actuel
+# b = (number) valeur de depart
+# c = (number) valeur finale
+# d = (number) durée
 def ease(t, b, c, d):
     t = t / d - 1
     return c * (t * t * t + 1) + b
 
-
+# sauvegarde la partie en cours dans le fichier "cache", en JSON
 def save():
     file = open("cache", "w")
     data = {'plateau': plateau, 'step': STEP, 'player': PLAYER}
     file.write(json.dumps(data))
     file.close()
 
-
+# charge une partie en cours à partir du fichier "cache"
 def load():
     global PLAYER
     global plateau
@@ -389,7 +407,7 @@ def load():
                         columns = len(plateau)
         file.close()
 
-
+# relance une nouvelle partie
 def new_game():
     global PLAYER
     global plateau
@@ -408,7 +426,9 @@ def new_game():
         resize_plateau(time.time() * 1000,
                        padding_step_1 - padding_step_2, 300)
 
-
+# pose un pion sur le plateau
+# mouse_pos = (tuple) position en x et y de la souris tel que (x, y)
+# player = (1 ou 2) identifiant du joueur
 def pose_pion(mouse_pos, player):
     pos = pos_click_plateau(mouse_pos)
     x = pos[0]
@@ -424,11 +444,6 @@ def pose_pion(mouse_pos, player):
     if test_win(columns, plateau, nbr_pion, player):
         STEP = 3
 
-# n = (int) nombre de colonnes
-# l = (list) plateau
-# p = (int) nombre de valeur identique à aligner pour une victoire
-# j = (int) 1 pour le joueur 1, 2 pour le joueur 2
-
 
 def draw_button_reset(x):
     screen.blit(img_button_reset[x], (screen_size[
@@ -438,7 +453,11 @@ def draw_button_reset(x):
 def who_play():
     screen.blit(img_turn[PLAYER - 1], (screen_size[1], padding_step_1))
 
-
+# retourne True si une condition de victoire est détectée horizontalement
+# n = (int) nombre de colonnes
+# l = (list) plateau
+# p = (int) nombre de valeur identique à aligner pour une victoire
+# j = (int) 1 pour le joueur 1, 2 pour le joueur 2
 def victory_horizontal(n, l, p, j):
     for y in range(n):
         v = 0
@@ -451,7 +470,11 @@ def victory_horizontal(n, l, p, j):
                 return True
     return False
 
-
+# retourne True si une condition de victoire est détectée verticalement
+# n = (int) nombre de colonnes
+# l = (list) plateau
+# p = (int) nombre de valeur identique à aligner pour une victoire
+# j = (int) 1 pour le joueur 1, 2 pour le joueur 2
 def victory_vertical(n, l, p, j):
     for x in range(n):
         v = 0
@@ -464,7 +487,11 @@ def victory_vertical(n, l, p, j):
                 return True
     return False
 
-
+# retourne True si une condition de victoire est détectée en diagonal : /
+# n = (int) nombre de colonnes
+# l = (list) plateau
+# p = (int) nombre de valeur identique à aligner pour une victoire
+# j = (int) 1 pour le joueur 1, 2 pour le joueur 2
 def victory_diagonal1(n, l, p, j):
     for i in range(n * 2):
         x, y, v = i, 0, 0
@@ -480,7 +507,11 @@ def victory_diagonal1(n, l, p, j):
             y += 1
     return False
 
-
+# retourne True si une condition de victoire est détectée en diagonal : \
+# n = (int) nombre de colonnes
+# l = (list) plateau
+# p = (int) nombre de valeur identique à aligner pour une victoire
+# j = (int) 1 pour le joueur 1, 2 pour le joueur 2
 def victory_diagonal2(n, l, p, j):
     for i in range(n * 2):
         x, y, v = i, n - 1, 0
@@ -496,7 +527,11 @@ def victory_diagonal2(n, l, p, j):
             y -= 1
     return False
 
-
+# retourne True si au moins une condition de victoire est détectée
+# n = (int) nombre de colonnes
+# l = (list) plateau
+# p = (int) nombre de valeur identique à aligner pour une victoire
+# j = (int) 1 pour le joueur 1, 2 pour le joueur 2
 def test_win(n, l, p, j):
     if victory_horizontal(n, l, p, j) or victory_vertical(n, l, p, j) or victory_diagonal1(n, l, p, j) or victory_diagonal2(n, l, p, j):
         file = open("cache", "w")
@@ -513,7 +548,7 @@ def animat_win():
     screen.blit(img_win, (screen_size[1] // 2 - 90, screen_size[1] // 2 - 90))
     duration = 0.6
     start = time.time()
-    while start+duration <= time.time():
+    #while start+duration <= time.time():
         # animate
 
 running = True
