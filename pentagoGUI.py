@@ -455,7 +455,7 @@ def test_win(n, l, p, j):
 
 
 def animat_win():
-    screen.blit(img_win,screen_size[0]//2,screen_size[1]//2)
+    screen.blit(img_win,(screen_size[1]//2-90,screen_size[1]//2-90))
 
 
 running = True
