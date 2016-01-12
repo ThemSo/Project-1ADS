@@ -136,7 +136,7 @@ def click_arrows(mouse_pos):
             angle = 90
         else:
             angle = -90
-        rotate_cadrant(time.time() * 1000, cadrant, angle, 1000)
+        rotate_cadrant(time.time() * 1000, cadrant, angle, 600)
         plateau = rotation_plateau(plateau, columns, cadrant, rotation)
         resize_plateau(time.time() * 1000,
                        padding_step_1 - padding_step_2, 600)
@@ -436,7 +436,7 @@ def new_game():
     render((0, 0))
     if padding != padding_step_1:
         resize_plateau(time.time() * 1000,
-                       padding_step_1 - padding_step_2, 300)
+                       padding_step_1 - padding_step_2, 600)
 
 
 # pose un pion sur le plateau
@@ -559,7 +559,7 @@ def test_win(n, l, p, j):
         file.close()
         if padding > padding_step_1:
             resize_plateau(time.time() * 1000,
-                           padding_step_1 - padding_step_2, 300)
+                           padding_step_1 - padding_step_2, 600)
         return True
     return False
 
