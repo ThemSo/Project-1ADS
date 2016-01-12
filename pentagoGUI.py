@@ -17,14 +17,14 @@ def render(rotation):
     if STEP == 2:
         draw_arrow()
     draw_plateau(plateau, rotation)
+    draw_turn_player()
     if STEP == 1 and not animation:
         screen.blit(img[PLAYER], pygame.rect.Rect(
             mouse_pos[0] - 15, mouse_pos[1] - 15, 30, 30))
-    if screen_size[1] <= mouse_pos[0] <= screen_size[1] + 250 - padding_step_1 and padding_step_1 + 146 + padding_step_1 <= mouse_pos[1] <= padding_step_1 + 45 + 146 + padding_step_1:
+    if screen_size[1] <= mouse_pos[0] <= screen_size[1] + 250 - padding_step_1 and screen_size[1]-padding_step_1-45 <= mouse_pos[1] <= screen_size[1]-padding_step_1:
         draw_button_reset(1)
     else:
         draw_button_reset(0)
-    who_play()
     if STEP == 3:
         animat_win()
     pygame.display.flip()
@@ -144,7 +144,7 @@ def click_arrows(mouse_pos):
             STEP = 3
         else:
             PLAYER = 1 if PLAYER == 2 else 2
-        save()
+            save()
 
 
 # retourne la position d'un point après rotation
@@ -450,22 +450,23 @@ def pose_pion(mouse_pos, player):
         global STEP
         sound[0].play()
         plateau[y][x] = player
-        STEP = 2
-        resize_plateau(time.time() * 1000,
-                       padding_step_2 - padding_step_1, 600)
-        save()
-    if test_win(columns, plateau, nbr_pion, player):
-        STEP = 3
+        if test_win(columns, plateau, nbr_pion, player):
+            STEP = 3
+        else:
+            STEP = 2
+            resize_plateau(time.time() * 1000,
+                           padding_step_2 - padding_step_1, 600)
+            save()
 
 
 # dessine le bouton "nouvelle partie"
 def draw_button_reset(x):
     screen.blit(img_button_reset[x], (screen_size[
-                1], padding_step_1 + 146 + padding_step_1))
+                1], screen_size[1]-padding_step_1-45))
 
 
 # dessine l'indication permettant de savoir qui doit jouer
-def who_play():
+def draw_turn_player():
     screen.blit(img_turn[PLAYER - 1], (screen_size[1], padding_step_1))
 
 
@@ -641,7 +642,7 @@ sound = [pygame.mixer.Sound("drop.wav")]
 while running:
     event = pygame.event.wait()
     if event.type == pygame.MOUSEBUTTONUP:
-        if screen_size[1] <= pygame.mouse.get_pos()[0] <= screen_size[1] + 250 - padding_step_1 and padding_step_1 + 146 + padding_step_1 <= pygame.mouse.get_pos()[1] <= padding_step_1 + 146 + 45 + padding_step_1:
+        if screen_size[1] <= pygame.mouse.get_pos()[0] <= screen_size[1] + 250 - padding_step_1 and screen_size[1]-padding_step_1-45 <= pygame.mouse.get_pos()[1] <= screen_size[1]-padding_step_1:
             sound[0].play()
             new_game()
         if STEP == 1:
