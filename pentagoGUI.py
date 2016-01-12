@@ -511,6 +511,10 @@ def test_win(n, l, p, j):
 
 def animat_win():
     screen.blit(img_win, (screen_size[1] // 2 - 90, screen_size[1] // 2 - 90))
+    duration = 0.6
+    start = time.time()
+    while start+duration <= time.time():
+        # animate
 
 running = True
 RED = (152, 0, 0)

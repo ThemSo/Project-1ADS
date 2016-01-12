@@ -1,8 +1,8 @@
 plateau = [
-	[0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 1],
     [0, 0, 0, 0, 1, 0]
 ]
@@ -43,7 +43,7 @@ def victory_vertical(n, l, p, j):
 
 # /
 def victory_diagonal1(n, l, p, j):
-    for i in range(n*2):
+    for i in range(n * 2):
         x, y, v = i, 0, 0
         while x >= 0 and y < n:
             if n > y >= 0 and n > x >= 0:
@@ -60,8 +60,8 @@ def victory_diagonal1(n, l, p, j):
 
 # \
 def victory_diagonal2(n, l, p, j):
-    for i in range(n*2):
-        x, y, v = i, n-1, 0
+    for i in range(n * 2):
+        x, y, v = i, n - 1, 0
         while x >= 0 and y >= 0:
             if n > y >= 0 and n > x >= 0:
                 if l[y][x] == j:
