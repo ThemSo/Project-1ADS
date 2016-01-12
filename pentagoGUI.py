@@ -22,6 +22,8 @@ def render(rotation):
     else:
         draw_button_reset(0)
     who_play()
+    if STEP == 3 :
+        animat_win()
     pygame.display.flip()
 
 
@@ -383,8 +385,10 @@ def pose_pion(mouse_pos, player):
 def draw_button_reset(x):
     screen.blit(img_button_reset[x], (screen_size[1], padding_step_1+146+padding_step_1))
 
+
 def who_play():
     screen.blit(img_turn[PLAYER-1],(screen_size[1],padding_step_1))
+
 
 def victory_horizontal(n, l, p, j):
     for y in range(n):
@@ -443,10 +447,15 @@ def victory_diagonal2(n, l, p, j):
             y -= 1
     return False
 
+
 def test_win(n, l, p, j):
     if victory_horizontal(n, l, p, j) or victory_vertical(n, l, p, j) or victory_diagonal1(n, l, p, j) or victory_diagonal2(n, l, p, j):
         return True
     return False
+
+
+def animat_win():
+    screen.blit(img_win,screen_size[0]//2,screen_size[1]//2)
 
 
 running = True
@@ -460,7 +469,7 @@ STEP = 1
 padding_step_1 = 8
 padding_step_2 = 45
 columns = 6
-nbr_pion = 3
+nbr_pion = 2
 mouse_pos = (0, 0)
 animation = False
 plateau = bases(columns)
@@ -478,6 +487,7 @@ img = [pygame.image.load('img/0.png'), pygame.image.load('img/1.png'), pygame.im
 img_arrow = pygame.image.load('img/arrow.png')
 img_button_reset = [pygame.image.load('img/button_reset.png'), pygame.image.load('img/button_reset_hover.png')]
 img_turn = [pygame.image.load('img/turn1.png'), pygame.image.load('img/turn2.png')]
+img_win = pygame.image.load('img/win.png')
 sound = [pygame.mixer.Sound("drop.wav")]
 pygame.display.set_caption('Pentago')
 render((0, 0))
