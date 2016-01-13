@@ -5,3 +5,4 @@
 - choix à la nouvelle partie
 - commentaires dans le code
 - score
+- IA
