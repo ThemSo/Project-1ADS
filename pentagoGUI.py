@@ -26,8 +26,7 @@ def render(rotation):
     if STEP == 3:
         animat_win()
     pygame.display.flip()
-
-
+ 
 # numeros des cotes
 #  ___
 # |1|3|
@@ -37,6 +36,7 @@ def render(rotation):
 # rotation d'un plateau
 # rotation_plateau(liste, nombre_de_ligne, numero_du_cote, True = horaire
 # et False = antihoraire)
+
 def rotation_plateau(plateau_tmp, m, n, sens):
     x, y, maxx, maxy = 0, 0, m // 2, m // 2
 
@@ -511,9 +511,9 @@ def test_win(n, l, p, j):
 
 def animat_win():
     screen.blit(img_win, (screen_size[1] // 2 - 90, screen_size[1] // 2 - 90))
-    duration = 0.6
-    start = time.time()
-    while start+duration <= time.time():
+  #  duration = 0.6
+   # start = time.time()
+    #bwhile start+duration <= time.time():
         # animate
 
 running = True
