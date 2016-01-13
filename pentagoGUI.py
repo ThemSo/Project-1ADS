@@ -21,10 +21,7 @@ def render(rotation):
     if STEP == 1 and not animation:
         screen.blit(img[PLAYER], pygame.rect.Rect(
             mouse_pos[0] - 15, mouse_pos[1] - 15, 30, 30))
-    if screen_size[1] <= mouse_pos[0] <= screen_size[1] + 250 - padding_step_1 and screen_size[1]-padding_step_1-45 <= mouse_pos[1] <= screen_size[1]-padding_step_1:
-        draw_button_reset(1)
-    else:
-        draw_button_reset(0)
+    draw_interface()
     if STEP == 3:
         animat_win()
     pygame.display.flip()
@@ -460,10 +457,26 @@ def pose_pion(mouse_pos, player):
             save()
 
 
-# dessine le bouton "nouvelle partie"
-def draw_button_reset(x):
-    screen.blit(img_button_reset[x], (screen_size[
-                1], screen_size[1]-padding_step_1-45))
+# dessine l'interface de parametrage de parties
+def draw_interface():
+    if screen_size[1] <= mouse_pos[0] <= screen_size[1] + 250 - padding_step_1 and padding_step_1 * 4 + 51 + 128 + 85 <= mouse_pos[1] <= padding_step_1 * 4 + 51 + 128 + 85 + 45:
+        screen.blit(img_button_reset[1], (screen_size[
+            1], padding_step_1 * 4 + 51 + 128 + 85))
+    else:
+        screen.blit(img_button_reset[0], (screen_size[
+            1], padding_step_1 * 4 + 51 + 128 + 85))
+
+    screen.blit(img_interface[0], (screen_size[1], padding_step_1 * 2 + 51))
+    screen.blit(img_interface[1], (screen_size[1],
+                                   padding_step_1 * 3 + 51 + 128))
+
+
+# detection du clique sur l'interface
+def click_interface(mouse_pos):
+    if screen_size[1] <= mouse_pos[0] <= screen_size[1] + 250 - padding_step_1:
+        if padding_step_1 * 4 + 51 + 128 + 85 <= mouse_pos[1] <= padding_step_1 * 4 + 51 + 128 + 85 + 45:
+            sound[0].play()
+            new_game()
 
 
 # dessine l'indication permettant de savoir qui doit jouer
@@ -570,8 +583,8 @@ def animat_win():
     screen.blit(img_win, (screen_size[1] // 2 - 90, screen_size[1] // 2 - 90))
   #  duration = 0.6
    # start = time.time()
-    #bwhile start+duration <= time.time():
-        # animate
+    # while start+duration <= time.time():
+    # animate
 
 
 running = True
@@ -634,6 +647,8 @@ img = [pygame.image.load(
 img_arrow = pygame.image.load('img/arrow.png')
 img_button_reset = [pygame.image.load(
     'img/button_reset.png'), pygame.image.load('img/button_reset_hover.png')]
+img_interface = [pygame.image.load(
+    'img/nb_columns.png'), pygame.image.load('img/nb_pions.png')]
 img_turn = [pygame.image.load('img/turn1.png'),
             pygame.image.load('img/turn2.png')]
 img_win = pygame.image.load('img/win.png')
@@ -644,9 +659,7 @@ sound = [pygame.mixer.Sound("drop.wav")]
 while running:
     event = pygame.event.wait()
     if event.type == pygame.MOUSEBUTTONUP:
-        if screen_size[1] <= pygame.mouse.get_pos()[0] <= screen_size[1] + 250 - padding_step_1 and screen_size[1]-padding_step_1-45 <= pygame.mouse.get_pos()[1] <= screen_size[1]-padding_step_1:
-            sound[0].play()
-            new_game()
+        click_interface(pygame.mouse.get_pos())
         if STEP == 1:
             pose_pion(pygame.mouse.get_pos(), PLAYER)
         elif STEP == 2:
