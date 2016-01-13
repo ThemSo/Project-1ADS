@@ -21,10 +21,106 @@ def render(rotation):
     if STEP == 1 and not animation:
         screen.blit(img[PLAYER], pygame.rect.Rect(
             mouse_pos[0] - 15, mouse_pos[1] - 15, 30, 30))
+    draw_win(win_top)
     draw_interface()
-    if STEP == 3:
-        animat_win()
     pygame.display.flip()
+
+
+# retourne True si une condition de victoire est détectée horizontalement
+# n = (int) nombre de colonnes
+# l = (list) plateau
+# p = (int) nombre de valeur identique à aligner pour une victoire
+# j = (int) 1 pour le joueur 1, 2 pour le joueur 2
+def victory_horizontal(n, l, p, j):
+    for y in range(n):
+        v = 0
+        for x in range(n):
+            if l[y][x] == j:
+                v += 1
+            else:
+                v = 0
+            if v >= p:
+                return True
+    return False
+
+
+# retourne True si une condition de victoire est détectée verticalement
+# n = (int) nombre de colonnes
+# l = (list) plateau
+# p = (int) nombre de valeur identique à aligner pour une victoire
+# j = (int) 1 pour le joueur 1, 2 pour le joueur 2
+def victory_vertical(n, l, p, j):
+    for x in range(n):
+        v = 0
+        for y in range(n):
+            if l[y][x] == j:
+                v += 1
+            else:
+                v = 0
+            if v >= p:
+                return True
+    return False
+
+
+# retourne True si une condition de victoire est détectée en diagonal : /
+# n = (int) nombre de colonnes
+# l = (list) plateau
+# p = (int) nombre de valeur identique à aligner pour une victoire
+# j = (int) 1 pour le joueur 1, 2 pour le joueur 2
+def victory_diagonal1(n, l, p, j):
+    for i in range(n * 2):
+        x, y, v = i, 0, 0
+        while x >= 0 and y < n:
+            if n > y >= 0 and n > x >= 0:
+                if l[y][x] == j:
+                    v += 1
+                else:
+                    v = 0
+                if v >= p:
+                    return True
+            x -= 1
+            y += 1
+    return False
+
+
+# retourne True si une condition de victoire est détectée en diagonal : \
+# n = (int) nombre de colonnes
+# l = (list) plateau
+# p = (int) nombre de valeur identique à aligner pour une victoire
+# j = (int) 1 pour le joueur 1, 2 pour le joueur 2
+def victory_diagonal2(n, l, p, j):
+    for i in range(n * 2):
+        x, y, v = i, n - 1, 0
+        while x >= 0 and y >= 0:
+            if n > y >= 0 and n > x >= 0:
+                if l[y][x] == j:
+                    v += 1
+                else:
+                    v = 0
+                if v >= p:
+                    return True
+            x -= 1
+            y -= 1
+    return False
+
+
+# retourne True si au moins une condition de victoire est détectée
+# n = (int) nombre de colonnes
+# l = (list) plateau
+# p = (int) nombre de valeur identique à aligner pour une victoire
+# j = (int) 1 pour le joueur 1, 2 pour le joueur 2
+def test_win(n, l, p, j):
+    if victory_horizontal(n, l, p, j) or victory_vertical(n, l, p, j) or victory_diagonal1(n, l, p, j) or victory_diagonal2(n, l, p, j):
+        file = open("cache", "w")
+        file.write("")
+        file.close()
+        sound[1].play()
+        animat_win()
+        if padding > padding_step_1:
+            resize_plateau(time.time() * 1000,
+                           padding_step_1 - padding_step_2, 600)
+        return True
+    return False
 
 
 # numéros des cotés :
@@ -36,7 +132,6 @@ def render(rotation):
 # rotation d'un plateau
 # rotation_plateau(liste, nombre_de_ligne, numero_du_cote, True = horaire
 # et False = antihoraire)
-
 def rotation_plateau(plateau_tmp, m, n, sens):
     x, y, maxx, maxy = 0, 0, m // 2, m // 2
 
@@ -138,7 +233,7 @@ def click_arrows(mouse_pos):
         plateau = rotation_plateau(plateau, columns, cadrant, rotation)
         resize_plateau(time.time() * 1000,
                        padding_step_1 - padding_step_2, 600)
-        if test_win(columns, plateau, nbr_pion, PLAYER):
+        if test_win(columns, plateau, nb_pions, PLAYER):
             STEP = 3
         else:
             PLAYER = 1 if PLAYER == 2 else 2
@@ -448,7 +543,7 @@ def pose_pion(mouse_pos, player):
         global STEP
         sound[0].play()
         plateau[y][x] = player
-        if test_win(columns, plateau, nbr_pion, player):
+        if test_win(columns, plateau, nb_pions, player):
             STEP = 3
         else:
             STEP = 2
@@ -484,108 +579,26 @@ def draw_turn_player():
     screen.blit(img_turn[PLAYER - 1], (screen_size[1], padding_step_1))
 
 
-# retourne True si une condition de victoire est détectée horizontalement
-# n = (int) nombre de colonnes
-# l = (list) plateau
-# p = (int) nombre de valeur identique à aligner pour une victoire
-# j = (int) 1 pour le joueur 1, 2 pour le joueur 2
-def victory_horizontal(n, l, p, j):
-    for y in range(n):
-        v = 0
-        for x in range(n):
-            if l[y][x] == j:
-                v += 1
-            else:
-                v = 0
-            if v >= p:
-                return True
-    return False
-
-
-# retourne True si une condition de victoire est détectée verticalement
-# n = (int) nombre de colonnes
-# l = (list) plateau
-# p = (int) nombre de valeur identique à aligner pour une victoire
-# j = (int) 1 pour le joueur 1, 2 pour le joueur 2
-def victory_vertical(n, l, p, j):
-    for x in range(n):
-        v = 0
-        for y in range(n):
-            if l[y][x] == j:
-                v += 1
-            else:
-                v = 0
-            if v >= p:
-                return True
-    return False
-
-
-# retourne True si une condition de victoire est détectée en diagonal : /
-# n = (int) nombre de colonnes
-# l = (list) plateau
-# p = (int) nombre de valeur identique à aligner pour une victoire
-# j = (int) 1 pour le joueur 1, 2 pour le joueur 2
-def victory_diagonal1(n, l, p, j):
-    for i in range(n * 2):
-        x, y, v = i, 0, 0
-        while x >= 0 and y < n:
-            if n > y >= 0 and n > x >= 0:
-                if l[y][x] == j:
-                    v += 1
-                else:
-                    v = 0
-                if v >= p:
-                    return True
-            x -= 1
-            y += 1
-    return False
-
-
-# retourne True si une condition de victoire est détectée en diagonal : \
-# n = (int) nombre de colonnes
-# l = (list) plateau
-# p = (int) nombre de valeur identique à aligner pour une victoire
-# j = (int) 1 pour le joueur 1, 2 pour le joueur 2
-def victory_diagonal2(n, l, p, j):
-    for i in range(n * 2):
-        x, y, v = i, n - 1, 0
-        while x >= 0 and y >= 0:
-            if n > y >= 0 and n > x >= 0:
-                if l[y][x] == j:
-                    v += 1
-                else:
-                    v = 0
-                if v >= p:
-                    return True
-            x -= 1
-            y -= 1
-    return False
-
-
-# retourne True si au moins une condition de victoire est détectée
-# n = (int) nombre de colonnes
-# l = (list) plateau
-# p = (int) nombre de valeur identique à aligner pour une victoire
-# j = (int) 1 pour le joueur 1, 2 pour le joueur 2
-def test_win(n, l, p, j):
-    if victory_horizontal(n, l, p, j) or victory_vertical(n, l, p, j) or victory_diagonal1(n, l, p, j) or victory_diagonal2(n, l, p, j):
-        file = open("cache", "w")
-        file.write("")
-        file.close()
-        sound[1].play()
-        if padding > padding_step_1:
-            resize_plateau(time.time() * 1000,
-                           padding_step_1 - padding_step_2, 600)
-        return True
-    return False
+def draw_win(win_top):
+    screen.blit(img_win, (screen_size[1] // 2 - 90, win_top))
 
 
 def animat_win():
-    screen.blit(img_win, (screen_size[1] // 2 - 90, screen_size[1] // 2 - 90))
-  #  duration = 0.6
-   # start = time.time()
-    # while start+duration <= time.time():
-    # animate
+    global win_top
+    global animation
+    duration = 3500
+    mouse_pos = (-100, -100)
+    end_value = -screen_size[1] - 180
+    start_value = screen_size[1]
+    start = time.time() * 1000
+    current_time = time.time() * 1000
+    animation = True
+    while current_time - start <= duration:
+        current_time = time.time() * 1000
+        win_top = round(ease(current_time - start, start_value, end_value, duration))
+        render((0,0))
+        clock.tick(60)
+    animation = False
 
 
 running = True
@@ -616,7 +629,7 @@ padding_step_2 = 45
 columns = 6
 
 # nombre de pion à aligner par defaut
-nbr_pion = 2
+nb_pions = 2
 
 # position de la souris par defaut
 mouse_pos = (0, 0)
@@ -626,6 +639,10 @@ animation = False
 
 # définition du plateau en fonction du nombre de colonne
 plateau = bases(columns)
+
+# parametres de nouvelle partie
+new_columns = 6
+new_nb_pions = 5
 
 # chargement du jeu à partir du fichier "cache"
 load()
@@ -639,9 +656,10 @@ pygame.init()
 
 # définition de la fenètre
 screen_size = (800, 550)
+win_top = screen_size[1]
 screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
 pygame.display.set_caption('Pentago')
-
+clock = pygame.time.Clock()
 # chargement des fichiers image
 img = [pygame.image.load(
     'img/0.png'), pygame.image.load('img/1.png'), pygame.image.load('img/2.png')]
@@ -670,7 +688,9 @@ while running:
     if event.type == pygame.VIDEORESIZE:
         screen_size = (round(event.size[1] + 250), round(event.size[1]))
         screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
-    render((0, 0))
+    if not animation:
+        render((0, 0))
     if event.type == pygame.QUIT:
         running = False
+    clock.tick(60)
 pygame.quit()
