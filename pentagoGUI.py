@@ -583,7 +583,7 @@ def draw_win(win_top):
     screen.blit(img_win, (screen_size[1] // 2 - 90, win_top))
 
 
-<<<<<<< HEAD
+
 def animat_win(ease,end_value):
     duration = 0.6
     start = time.time() 
@@ -593,13 +593,13 @@ def animat_win(ease,end_value):
         screen.blit(img_win, (screen_size[1] // 2 - 90, screen_size[1] // 2 - 90+screen_size[1] // 2 + 90))
         render(img_win,(screen_size[1]//2-90,screen_size[1] // 2, ease, end_value))
     animate 
-=======
+
 def animate_win():
     global win_top
     global animation
     duration = 3500
     mouse_pos = (-100, -100)
-    end_value = -screen_size[1] - 180
+    end_value = -screen_size[1] - 200
     start_value = screen_size[1]
     start = time.time() * 1000
     current_time = time.time() * 1000
@@ -610,7 +610,7 @@ def animate_win():
         render((0,0))
         clock.tick(60)
     animation = False
->>>>>>> origin/master
+
 
 
 running = True
