@@ -566,12 +566,15 @@ def test_win(n, l, p, j):
     return False
 
 
-def animat_win():
-    screen.blit(img_win, (screen_size[1] // 2 - 90, screen_size[1] // 2 - 90))
-  #  duration = 0.6
-   # start = time.time()
-    #bwhile start+duration <= time.time():
-        # animate
+def animat_win(ease,end_value):
+    duration = 0.6
+    start = time.time() 
+    start_value = 0
+    end_value = screen_size[1] // 2 + 90
+    while start+duration <= time.time():
+        screen.blit(img_win, (screen_size[1] // 2 - 90, screen_size[1] // 2 - 90+screen_size[1] // 2 + 90))
+        render(img_win,(screen_size[1]//2-90,screen_size[1] // 2, ease, end_value))
+    animate 
 
 
 running = True
