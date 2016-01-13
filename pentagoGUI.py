@@ -134,7 +134,7 @@ def click_arrows(mouse_pos):
             angle = 90
         else:
             angle = -90
-        rotate_cadrant(time.time() * 1000, cadrant, angle, 600)
+        rotate_cadrant(time.time() * 1000, cadrant, angle, 1000)
         plateau = rotation_plateau(plateau, columns, cadrant, rotation)
         resize_plateau(time.time() * 1000,
                        padding_step_1 - padding_step_2, 600)
@@ -572,6 +572,7 @@ def test_win(n, l, p, j):
         file = open("cache", "w")
         file.write("")
         file.close()
+        sound[1].play()
         if padding > padding_step_1:
             resize_plateau(time.time() * 1000,
                            padding_step_1 - padding_step_2, 600)
@@ -654,7 +655,7 @@ img_turn = [pygame.image.load('img/turn1.png'),
 img_win = pygame.image.load('img/win.png')
 
 # chargement des fichiers audio
-sound = [pygame.mixer.Sound("drop.wav")]
+sound = [pygame.mixer.Sound("drop.wav"), pygame.mixer.Sound("applause.wav")]
 
 while running:
     event = pygame.event.wait()
