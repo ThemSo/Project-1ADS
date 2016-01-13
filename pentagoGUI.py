@@ -115,7 +115,7 @@ def test_win(n, l, p, j):
         file.write("")
         file.close()
         sound[1].play()
-        animat_win()
+        animate_win()
         if padding > padding_step_1:
             resize_plateau(time.time() * 1000,
                            padding_step_1 - padding_step_2, 600)
@@ -583,7 +583,7 @@ def draw_win(win_top):
     screen.blit(img_win, (screen_size[1] // 2 - 90, win_top))
 
 
-def animat_win():
+def animate_win():
     global win_top
     global animation
     duration = 3500
