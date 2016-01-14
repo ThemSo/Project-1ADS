@@ -21,7 +21,8 @@ def render(rotation):
     if STEP == 1 and not animation:
         screen.blit(img[PLAYER], pygame.rect.Rect(
             mouse_pos[0] - 15, mouse_pos[1] - 15, 30, 30))
-    draw_win(win_top)
+    if animation:
+        draw_win(win_top)
     draw_interface()
     pygame.display.flip()
 
@@ -583,6 +584,7 @@ def draw_win(win_top):
     screen.blit(img_win, (screen_size[1] // 2 - 90, win_top))
 
 
+<<<<<<< HEAD
 
 def animat_win(ease,end_value):
     duration = 0.6
@@ -594,13 +596,15 @@ def animat_win(ease,end_value):
         render(img_win,(screen_size[1]//2-90,screen_size[1] // 2, ease, end_value))
     animate 
 
+=======
+>>>>>>> origin/master
 def animate_win():
     global win_top
     global animation
-    duration = 3500
+    duration = 5000
     mouse_pos = (-100, -100)
-    end_value = -screen_size[1] - 180
-    start_value = screen_size[1]
+    end_value = -screen_size[1] - 600
+    start_value = screen_size[1] + 300
     start = time.time() * 1000
     current_time = time.time() * 1000
     animation = True
@@ -610,7 +614,10 @@ def animate_win():
         render((0,0))
         clock.tick(60)
     animation = False
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
 
 
 running = True
