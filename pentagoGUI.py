@@ -599,7 +599,7 @@ def animate_win():
     global animation
     duration = 3500
     mouse_pos = (-100, -100)
-    end_value = -screen_size[1] - 200
+    end_value = -screen_size[1] - 180
     start_value = screen_size[1]
     start = time.time() * 1000
     current_time = time.time() * 1000
