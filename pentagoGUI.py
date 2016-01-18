@@ -619,14 +619,18 @@ def new_game():
     global STEP
     global columns
 
+    # réinitialise le fichier "cache"
     file = open("cache", "w")
     file.write("")
     file.close()
 
+    # réinitialise le joueur, l'étape du jeu, et le plateau
     STEP = 1
     PLAYER = 1 if PLAYER == 2 else 2
     plateau = bases(columns)
     render((0, 0))
+
+    # redimensionne la taille du plateau si besoin
     if padding != padding_step_1:
         resize_plateau(time.time() * 1000,
                        padding_step_1 - padding_step_2, 600)
