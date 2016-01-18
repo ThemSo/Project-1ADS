@@ -76,7 +76,8 @@ def victory_diagonal2(n, l, p, j):
 
 
 def test_win(n, l, p, j):
-    if victory_horizontal(n, l, p, j) or victory_vertical(n, l, p, j) or victory_diagonal1(n, l, p, j) or victory_diagonal2(n, l, p, j):
+    if victory_horizontal(n, l, p, j) or victory_vertical(n, l, p, j) \
+         or victory_diagonal1(n, l, p, j) or victory_diagonal2(n, l, p, j):
         return True
     return False
 

@@ -32,7 +32,7 @@ def render(rotation):
         screen.blit(img[PLAYER], pygame.rect.Rect(
             mouse_pos[0] - 15, mouse_pos[1] - 15, 30, 30))
 
-    if animation:
+    if animation and STEP == 3:
         draw_win(win_top)
 
     # dessin de l'interface
@@ -126,10 +126,11 @@ def victory_diagonal2(n, l, p, j):
 # p = (int) nombre de valeur identique à aligner pour une victoire
 # j = (int) 1 pour le joueur 1, 2 pour le joueur 2
 def test_win(n, l, p, j):
-
+    global STEP
     # test de toutes les conditions de victoire
     if victory_horizontal(n, l, p, j) or victory_vertical(n, l, p, j) or victory_diagonal1(n, l, p, j) or victory_diagonal2(n, l, p, j):
         # en cas de victoire:
+        STEP = 3
         # réinitialise la sauvegarde
         file = open("cache", "w")
         file.write("")
@@ -138,7 +139,7 @@ def test_win(n, l, p, j):
         # lancement du son de victoire
         sound[1].play()
 
-        # lancemant de l'animation de victoire
+        # lancement de l'animation de victoire
         animate_win()
 
         # réinitialisation de la taille du plateau si elle n'est pas correct
@@ -146,7 +147,31 @@ def test_win(n, l, p, j):
             resize_plateau(time.time() * 1000,
                            padding_step_1 - padding_step_2, 600)
         return True
+    elif test_match_nul(l):
+        STEP = 3
+
+        # réinitialise la sauvegarde
+        file = open("cache", "w")
+        file.write("")
+        file.close()
+
+        if padding > padding_step_1:
+            resize_plateau(time.time() * 1000,
+                           padding_step_1 - padding_step_2, 600)
+        return True
     return False
+
+
+# test si match nul
+# l = (list) plateau
+def test_match_nul(l):
+    # si aucuns des éléments du plateau ne vaut "0", return False
+    for y in range(len(l)):
+        for x in range(len(l)):
+            if l[y][x] == 0:
+                return False
+    # sinon
+    return True
 
 
 # numéros des cotés :
@@ -160,7 +185,8 @@ def test_win(n, l, p, j):
 # et False = antihoraire)
 def rotation_plateau(plateau_tmp, m, n, sens):
     x, y, maxx, maxy = 0, 0, m // 2, m // 2
-    # récuperation du morceau du plateau contenant le cadrant à tourner dans une liste temporaire,
+    # récuperation du morceau du plateau contenant le cadrant à tourner dans
+    # une liste temporaire,
     if n % 2 == 0:
         x = m // 2
         maxx = m
@@ -175,9 +201,11 @@ def rotation_plateau(plateau_tmp, m, n, sens):
         tmpx = maxx
         while tmpx > x:
             if not sens:
-                tmp[maxy - tmpy][tmpx - x - 1] = plateau_tmp[tmpx - 1][tmpy - 1]
+                tmp[maxy - tmpy][tmpx - x -
+                                 1] = plateau_tmp[tmpx - 1][tmpy - 1]
             else:
-                tmp[tmpy - y - 1][maxx - tmpx] = plateau_tmp[tmpx - 1][tmpy - 1]
+                tmp[tmpy - y - 1][maxx -
+                                  tmpx] = plateau_tmp[tmpx - 1][tmpy - 1]
             tmpx -= 1
         tmpy -= 1
 
@@ -281,10 +309,7 @@ def click_arrows(mouse_pos):
                        padding_step_1 - padding_step_2, 600)
 
         # détection de victoire
-        if test_win(columns, plateau, nb_pions, PLAYER):
-            # fin de la partie
-            STEP = 3
-        else:
+        if not test_win(columns, plateau, nb_pions, PLAYER):
             # passage au tour suivant et sauvegarde du jeu
             PLAYER = 1 if PLAYER == 2 else 2
             save()
@@ -497,7 +522,8 @@ def resize_plateau(start, end_value, duration):
     global animation
     global mouse_pos
 
-    # réassigne la variable "mouse_pos" pour ne pas afficher le pion à afficher à la fin de l'animation
+    # réassigne la variable "mouse_pos" pour ne pas afficher le pion à
+    # afficher à la fin de l'animation
     mouse_pos = (-100, -100)
 
     # valeur de départ
@@ -532,7 +558,8 @@ def rotate_cadrant(start, cadrant, end_value, duration):
     global animation
     global mouse_pos
 
-    # réassigne la variable "mouse_pos" pour ne pas afficher le pion à afficher à la fin de l'animation
+    # réassigne la variable "mouse_pos" pour ne pas afficher le pion à
+    # afficher à la fin de l'animation
     mouse_pos = (-100, -100)
 
     # valeur de départ
@@ -647,9 +674,7 @@ def pose_pion(mouse_pos, player):
         global STEP
         sound[0].play()
         plateau[y][x] = player
-        if test_win(columns, plateau, nb_pions, player):
-            STEP = 3
-        else:
+        if not test_win(columns, plateau, nb_pions, player):
             STEP = 2
             resize_plateau(time.time() * 1000,
                            padding_step_2 - padding_step_1, 600)
@@ -690,17 +715,16 @@ def draw_win(win_top):
 def animate_win():
     global win_top
     global animation
-    duration = 3000
+    duration = 2000
     mouse_pos = (-100, -100)
-    end_value = -screen_size[1] - 600
-    start_value = screen_size[1] + 300
+    end_value = -screen_size[1]-180
+    start_value = screen_size[1]
     start = time.time() * 1000
     current_time = time.time() * 1000
     animation = True
     while current_time - start <= duration:
         current_time = time.time() * 1000
-        win_top = round(ease(current_time - start,
-                             start_value, end_value, duration))
+        win_top = round(((screen_size[1]+180)/duration)*(current_time-start))-180
         render((0, 0))
         clock.tick(60)
     animation = False
@@ -734,7 +758,7 @@ padding_step_2 = 45
 columns = 6
 
 # nombre de pion à aligner par defaut
-nb_pions = 2
+nb_pions = 5
 
 # position de la souris par defaut
 mouse_pos = (0, 0)
@@ -759,7 +783,7 @@ else:
 # initiation du module pygame
 pygame.init()
 
-# définition de la fenètre
+# définition de la fenêtre
 screen_size = (800, 550)
 win_top = screen_size[1]
 screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
@@ -809,14 +833,16 @@ while running:
 
         # lorsque la fenêtre est redimensionnée
         if event.type == pygame.VIDEORESIZE:
-            # redimensionnement de la fenêtre en gardant le bon ration (Y+250, Y)
+            # redimensionnement de la fenêtre en gardant le bon ratio (Y+250,Y)
             screen_size = (round(event.size[1] + 250), round(event.size[1]))
             screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
 
         # dessin du jeu dans la fenêtre
         render((0, 0))
+
         # gestion du framerate
         clock.tick(60)
+
     # sort de la boucle si le joueur quitte le jeu
     if event.type == pygame.QUIT:
         running = False
