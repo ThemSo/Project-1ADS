@@ -1,8 +1,11 @@
 #Project-1ADS
+
 ##TODO:
-- timer
-- animation Win
+- match nul
 - choix à la nouvelle partie
-- commentaires dans le code
+- commentaires
+
+##Bonus:
+- timer
 - score
 - IA
