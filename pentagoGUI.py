@@ -611,7 +611,9 @@ def load():
     global plateau
     global STEP
     global columns
+    global new_columns
     global nb_pions
+    global new_nb_pions
 
     # si le fichier de sauvegarde existe
     if os.path.isfile("cache"):
@@ -636,6 +638,8 @@ def load():
                         plateau = data['plateau']
                         columns = data['columns']
                         nb_pions = data['nb_pions']
+                        new_columns = columns
+                        new_nb_pions = nb_pions
         file.close()
 
 
@@ -645,6 +649,7 @@ def new_game():
     global plateau
     global STEP
     global columns
+    global nb_pions
 
     # réinitialise le fichier "cache"
     file = open("cache", "w")
@@ -654,7 +659,9 @@ def new_game():
     # réinitialise le joueur, l'étape du jeu, et le plateau
     STEP = 1
     PLAYER = 1 if PLAYER == 2 else 2
-    plateau = bases(columns)
+    columns = new_columns
+    nb_pions = new_nb_pions
+    plateau = bases(new_columns)
     render((0, 0))
 
     # redimensionne la taille du plateau si besoin
@@ -694,10 +701,59 @@ def draw_interface():
     screen.blit(img_interface[1], (screen_size[1],
                                    padding_step_1 * 3 + 51 + 128))
 
+    # nombre de colonnes (texte)
+    font = pygame.font.Font(None, 40)
+    color_active = (255, 255, 255)
+    color_inactive = (100, 100, 100)
+
+    color = color_active if new_columns == 4 else color_inactive
+    text = font.render("4", 1, color)
+    screen.blit(text, (screen_size[1]+32, 140))
+
+    color = color_active if new_columns == 6 else color_inactive
+    text = font.render("6", 1, color)
+    screen.blit(text, (screen_size[1]+111, 140))
+
+    color = color_active if new_columns == 8 else color_inactive
+    text = font.render("8", 1, color)
+    screen.blit(text, (screen_size[1]+192, 140))
+
+    # nombre de pions à aligner (texte)
+    draw_nb_pions()
+
+
+def draw_nb_pions():
+    font = pygame.font.Font(None, 30)
+    color_active = (255, 255, 255)
+    color_inactive = (100, 100, 100)
+    color_forbidden = (50, 50, 50)
+    for i in range(3,9):
+        if new_nb_pions == i:
+            color = color_active
+        elif i > new_columns:
+            color = color_forbidden
+        else:
+            color = color_inactive
+        text = font.render(str(i), 1, color)
+        screen.blit(text, (screen_size[1]+15+(40*(i-3)), 257))
+
 
 # detection du clique sur l'interface
 def click_interface(mouse_pos):
+    global new_columns
+    global new_nb_pions
     if screen_size[1] <= mouse_pos[0] <= screen_size[1] + 250 - padding_step_1:
+        if 114 <= mouse_pos[1] <= 191:
+            if mouse_pos[0] <= screen_size[1] + 79:
+                new_columns = 4
+            elif mouse_pos[0] <= screen_size[1] + 160:
+                new_columns = 6
+            else:
+                new_columns = 8
+        if 248 <= mouse_pos[1] <= 284:
+            new_nb_pions = ((mouse_pos[0]-screen_size[1]-(padding_step_1))//((250 - padding_step_1- padding_step_1)//6))+3
+        if new_nb_pions > new_columns:
+                new_nb_pions = new_columns
         if padding_step_1 * 4 + 51 + 128 + 85 <= mouse_pos[1] <= padding_step_1 * 4 + 51 + 128 + 85 + 45:
             sound[0].play()
             new_game()

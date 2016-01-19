@@ -1,9 +1,7 @@
 #Project-1ADS
 
 ##TODO:
-- match nul
-- choix à la nouvelle partie
-- commentaires
+ \o/
 
 ##Bonus:
 - timer
