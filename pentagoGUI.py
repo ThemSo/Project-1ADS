@@ -904,4 +904,8 @@ while running:
         running = False
 
 # fermeture du jeu
+<<<<<<< HEAD
 pygame.quit()
+=======
+pygame.quit()
+>>>>>>> origin/master

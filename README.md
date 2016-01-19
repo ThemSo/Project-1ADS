@@ -1,8 +1,9 @@
 #Project-1ADS
+
 ##TODO:
+ \o/
+
+##Bonus:
 - timer
-- animation Win
-- choix à la nouvelle partie
-- commentaires dans le code
 - score
 - IA

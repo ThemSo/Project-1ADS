@@ -3,6 +3,7 @@ def bases(n):
     plateau = [[0 for i in range(n)] for i in range(n)]
     return plateau
 
+
 # affiche le tableau pour vérifier le bon fonctionnement des sous-programmes
 def afficher_tableau(plateau):
     print('')
@@ -13,4 +14,3 @@ def afficher_tableau(plateau):
 
 plateau = bases(6)
 afficher_tableau(plateau)
-
