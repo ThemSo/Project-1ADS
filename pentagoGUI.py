@@ -13,17 +13,32 @@ def bases(n):
 
 # rassemble les fonctions qui affichent des choses à l'écran
 def render(rotation):
+
+    # dessine le fond noir
     screen.fill(BLACK)
+
+    # si le joueur doit tourner un plateau, affiche les flêches
     if STEP == 2:
         draw_arrow()
+
+    # dessin du plateau
     draw_plateau(plateau, rotation)
+
+    # indique le nom du joueur devant jouer
     draw_turn_player()
+
+    # dessine le pion à poser
     if STEP == 1 and not animation:
         screen.blit(img[PLAYER], pygame.rect.Rect(
             mouse_pos[0] - 15, mouse_pos[1] - 15, 30, 30))
-    if animation:
+
+    if animation and STEP == 3:
         draw_win(win_top)
+
+    # dessin de l'interface
     draw_interface()
+
+    # actualisation de la fenêtre
     pygame.display.flip()
 
 
@@ -111,17 +126,52 @@ def victory_diagonal2(n, l, p, j):
 # p = (int) nombre de valeur identique à aligner pour une victoire
 # j = (int) 1 pour le joueur 1, 2 pour le joueur 2
 def test_win(n, l, p, j):
+    global STEP
+    # test de toutes les conditions de victoire
     if victory_horizontal(n, l, p, j) or victory_vertical(n, l, p, j) or victory_diagonal1(n, l, p, j) or victory_diagonal2(n, l, p, j):
+        # en cas de victoire:
+        STEP = 3
+        # réinitialise la sauvegarde
         file = open("cache", "w")
         file.write("")
         file.close()
+
+        # lancement du son de victoire
         sound[1].play()
+
+        # lancement de l'animation de victoire
         animate_win()
+
+        # réinitialisation de la taille du plateau si elle n'est pas correct
+        if padding > padding_step_1:
+            resize_plateau(time.time() * 1000,
+                           padding_step_1 - padding_step_2, 600)
+        return True
+    elif test_match_nul(l):
+        STEP = 3
+
+        # réinitialise la sauvegarde
+        file = open("cache", "w")
+        file.write("")
+        file.close()
+
         if padding > padding_step_1:
             resize_plateau(time.time() * 1000,
                            padding_step_1 - padding_step_2, 600)
         return True
     return False
+
+
+# test si match nul
+# l = (list) plateau
+def test_match_nul(l):
+    # si aucuns des éléments du plateau ne vaut "0", return False
+    for y in range(len(l)):
+        for x in range(len(l)):
+            if l[y][x] == 0:
+                return False
+    # sinon
+    return True
 
 
 # numéros des cotés :
@@ -135,7 +185,8 @@ def test_win(n, l, p, j):
 # et False = antihoraire)
 def rotation_plateau(plateau_tmp, m, n, sens):
     x, y, maxx, maxy = 0, 0, m // 2, m // 2
-
+    # récuperation du morceau du plateau contenant le cadrant à tourner dans
+    # une liste temporaire,
     if n % 2 == 0:
         x = m // 2
         maxx = m
@@ -143,21 +194,27 @@ def rotation_plateau(plateau_tmp, m, n, sens):
         y = m // 2
         maxy = m
     tmp = [[0 for i in range(m // 2)] for i in range(m // 2)]
+
+    # lecture de la liste temporaire dans un autre sens
     tmpy = maxy
     while tmpy > y:
         tmpx = maxx
         while tmpx > x:
             if not sens:
-                tmp[maxy - tmpy][tmpx - x - 1] = plateau_tmp[tmpx - 1][tmpy - 1]
+                tmp[maxy - tmpy][tmpx - x -
+                                 1] = plateau_tmp[tmpx - 1][tmpy - 1]
             else:
-                tmp[tmpy - y - 1][maxx - tmpx] = plateau_tmp[tmpx - 1][tmpy - 1]
+                tmp[tmpy - y - 1][maxx -
+                                  tmpx] = plateau_tmp[tmpx - 1][tmpy - 1]
             tmpx -= 1
         tmpy -= 1
 
+    # réinsertion de la liste temporaire dans la liste "plateau" principale
     for nx, vx in enumerate(tmp):
         for ny, vy in enumerate(vx):
             plateau_tmp[nx + x][ny + y] = vy
 
+    # retourne il liste contenant le plateau après rotation d'un cadrant
     return plateau_tmp
 
 
@@ -192,36 +249,46 @@ def click_arrows(mouse_pos):
     action = False
     rotation = False
     cadrant = 1
+
+    # détection des cliques sur les flêches
     if padding_step_2 + 30 >= x >= padding_step_2 >= y >= padding_step_2 - 30:
         cadrant = 1
         rotation = True
         action = True
-    elif padding_step_2 + height >= x >= padding_step_2 + height - 30 and padding_step_2 >= y >= padding_step_2 - 30:
+    elif padding_step_2 + height >= x >= padding_step_2 + height - 30 \
+            and padding_step_2 >= y >= padding_step_2 - 30:
         cadrant = 3
         action = True
-    elif padding_step_2 + height + 30 >= x >= padding_step_2 + height and padding_step_2 + 30 >= y >= padding_step_2:
+    elif padding_step_2 + height + 30 >= x >= padding_step_2 + height \
+            and padding_step_2 + 30 >= y >= padding_step_2:
         cadrant = 3
         rotation = True
         action = True
-    elif padding_step_2 + height + 30 >= x >= padding_step_2 + height >= y >= padding_step_2 + height - 30:
+    elif padding_step_2 + height + 30 >= x >= padding_step_2 + \
+            height >= y >= padding_step_2 + height - 30:
         cadrant = 4
         action = True
-    elif padding_step_2 + height + 30 >= y >= padding_step_2 + height >= x >= padding_step_2 + height - 30:
+    elif padding_step_2 + height + 30 >= y >= padding_step_2 + \
+            height >= x >= padding_step_2 + height - 30:
         cadrant = 4
         rotation = True
         action = True
-    elif padding_step_2 + 30 >= x >= padding_step_2 and padding_step_2 + height + 30 >= y >= padding_step_2 + height:
+    elif padding_step_2 + 30 >= x >= padding_step_2 and \
+            padding_step_2 + height + 30 >= y >= padding_step_2 + height:
         cadrant = 2
         action = True
-    elif padding_step_2 >= x >= padding_step_2 - 30 and padding_step_2 + height >= y >= padding_step_2 + height - 30:
+    elif padding_step_2 >= x >= padding_step_2 - 30 and \
+            padding_step_2 + height >= y >= padding_step_2 + height - 30:
         cadrant = 2
         rotation = True
         action = True
-    elif padding_step_2 + 30 >= y >= padding_step_2 >= x >= padding_step_2 - 30:
+    elif padding_step_2 + 30 >= y >= padding_step_2 \
+            >= x >= padding_step_2 - 30:
         cadrant = 1
         rotation = False
         action = True
 
+    # si une flêche à été cliquée
     if action:
         sound[0].play()
         render((0, 0))
@@ -230,13 +297,20 @@ def click_arrows(mouse_pos):
             angle = 90
         else:
             angle = -90
+
+        # lancement de l'animation de rotation du cadrant
         rotate_cadrant(time.time() * 1000, cadrant, angle, 1000)
+
+        # rotation du cadrant dans la list "plateau"
         plateau = rotation_plateau(plateau, columns, cadrant, rotation)
+
+        # lancement de l'animation de redimensionnement du plateau
         resize_plateau(time.time() * 1000,
                        padding_step_1 - padding_step_2, 600)
-        if test_win(columns, plateau, nb_pions, PLAYER):
-            STEP = 3
-        else:
+
+        # détection de victoire
+        if not test_win(columns, plateau, nb_pions, PLAYER):
+            # passage au tour suivant et sauvegarde du jeu
             PLAYER = 1 if PLAYER == 2 else 2
             save()
 
@@ -385,6 +459,7 @@ def draw_plateau(plateau, rotate):
             draw_y = ((iy * height_square) + padding + addy) + \
                 (height_square - 30) / 2
 
+            # en cas de rotation d'un cadrant
             if rotate[1] != 0 and rotate[0] != 0:
                 pos_pion = 1
                 #  ___
@@ -395,7 +470,11 @@ def draw_plateau(plateau, rotate):
                     pos_pion += 2
                 if iy >= (len(y) + 1) // 2:
                     pos_pion += 1
+
+                # si le cadrant actuel possède un angle
                 if pos_pion == rotate[0]:
+
+                    # réassigne la position des pions en fonction de l'angle
                     new_pos_pion = point_rotate(
                         cx, cy, draw_x + 15, draw_y + 15, rotate[1])
                     draw_x = new_pos_pion[0] - 15
@@ -442,15 +521,30 @@ def resize_plateau(start, end_value, duration):
     global padding
     global animation
     global mouse_pos
+
+    # réassigne la variable "mouse_pos" pour ne pas afficher le pion à
+    # afficher à la fin de l'animation
     mouse_pos = (-100, -100)
+
+    # valeur de départ
     start_value = padding
+
+    # temps actuel dans l'animation
     current_time = time.time() * 1000
+
+    # bloque la boucle de rendu classique
     animation = True
     while current_time - start <= duration:
+
+        # actualisation du temps actuel
         current_time = time.time() * 1000
+
+        # dessin du jeu en fonction du nouveau padding
         padding = round(ease(current_time - start,
                              start_value, end_value, duration))
         render((0, 0))
+
+    # réactive la boucle de rendu normale
     animation = False
 
 
@@ -463,18 +557,33 @@ def rotate_cadrant(start, cadrant, end_value, duration):
     global padding
     global animation
     global mouse_pos
+
+    # réassigne la variable "mouse_pos" pour ne pas afficher le pion à
+    # afficher à la fin de l'animation
     mouse_pos = (-100, -100)
+
+    # valeur de départ
     start_value = 0
+
+    # temps actuel dans l'animation
     current_time = time.time() * 1000
     animation = True
+
+    # temps que le temps de l'animation n'est pas écoulé
     while current_time - start <= duration:
+        # actualisation du temps actuel
         current_time = time.time() * 1000
+
+        # dessin du jeu en fonction de l'angle de rotation d'un cadrant
         render(
             (cadrant, round(ease(current_time - start, start_value, end_value, duration))))
+
+    # réactive la boucle de rendu normale
     animation = False
 
 
-# retourne une valeur sur une courbe en demi-cloche, en fonction du temps écoulé et de deux valeurs
+# retourne une valeur sur une courbe en demi-cloche,
+#     en fonction du temps écoulé et de deux valeurs:
 # t = (int) temps actuel
 # b = (number) valeur de depart
 # c = (number) valeur finale
@@ -486,8 +595,12 @@ def ease(t, b, c, d):
 
 # sauvegarde la partie en cours dans le fichier "cache", en JSON
 def save():
+    # ouverture du fichier "cache" en écriture
     file = open("cache", "w")
-    data = {'plateau': plateau, 'step': STEP, 'player': PLAYER}
+    # declaration d'un dictionnaire contenant les données du jeu en cours
+    data = {'plateau': plateau, 'step': STEP, 'player': PLAYER,
+            'columns': columns, 'nb_pions': nb_pions}
+    # écrit les données, parsées en JSON
     file.write(json.dumps(data))
     file.close()
 
@@ -498,18 +611,35 @@ def load():
     global plateau
     global STEP
     global columns
+    global new_columns
+    global nb_pions
+    global new_nb_pions
+
+    # si le fichier de sauvegarde existe
     if os.path.isfile("cache"):
+
+        # lecture du fichier de sauvegarde
         file = open("cache", "r")
         data = file.read()
+
+        # si le fichier n'est pas vide
         if data != '':
+
+            # Parsing du fichier JSON
             data = json.loads(data)
+
+            # si les données sauvegardée sont corrects
             if 'player' in data and data['player'] != '':
-                if 'step' in data and data['step'] != '':
-                    if 'plateau' in data and data['plateau'] != '':
+                if 'step' in data and data['step'] != '' and 'nb_pions' in data and data['nb_pions'] != '':
+                    if 'plateau' in data and data['plateau'] != '' and 'columns' in data and data['columns'] != '':
+                        # réinitialisation des variables
                         STEP = data['step']
                         PLAYER = data['player']
                         plateau = data['plateau']
-                        columns = len(plateau)
+                        columns = data['columns']
+                        nb_pions = data['nb_pions']
+                        new_columns = columns
+                        new_nb_pions = nb_pions
         file.close()
 
 
@@ -519,15 +649,22 @@ def new_game():
     global plateau
     global STEP
     global columns
+    global nb_pions
 
+    # réinitialise le fichier "cache"
     file = open("cache", "w")
     file.write("")
     file.close()
 
+    # réinitialise le joueur, l'étape du jeu, et le plateau
     STEP = 1
     PLAYER = 1 if PLAYER == 2 else 2
-    plateau = bases(columns)
+    columns = new_columns
+    nb_pions = new_nb_pions
+    plateau = bases(new_columns)
     render((0, 0))
+
+    # redimensionne la taille du plateau si besoin
     if padding != padding_step_1:
         resize_plateau(time.time() * 1000,
                        padding_step_1 - padding_step_2, 600)
@@ -544,9 +681,7 @@ def pose_pion(mouse_pos, player):
         global STEP
         sound[0].play()
         plateau[y][x] = player
-        if test_win(columns, plateau, nb_pions, player):
-            STEP = 3
-        else:
+        if not test_win(columns, plateau, nb_pions, player):
             STEP = 2
             resize_plateau(time.time() * 1000,
                            padding_step_2 - padding_step_1, 600)
@@ -566,10 +701,59 @@ def draw_interface():
     screen.blit(img_interface[1], (screen_size[1],
                                    padding_step_1 * 3 + 51 + 128))
 
+    # nombre de colonnes (texte)
+    font = pygame.font.Font(None, 40)
+    color_active = (255, 255, 255)
+    color_inactive = (100, 100, 100)
+
+    color = color_active if new_columns == 4 else color_inactive
+    text = font.render("4", 1, color)
+    screen.blit(text, (screen_size[1]+32, 140))
+
+    color = color_active if new_columns == 6 else color_inactive
+    text = font.render("6", 1, color)
+    screen.blit(text, (screen_size[1]+111, 140))
+
+    color = color_active if new_columns == 8 else color_inactive
+    text = font.render("8", 1, color)
+    screen.blit(text, (screen_size[1]+192, 140))
+
+    # nombre de pions à aligner (texte)
+    draw_nb_pions()
+
+
+def draw_nb_pions():
+    font = pygame.font.Font(None, 30)
+    color_active = (255, 255, 255)
+    color_inactive = (100, 100, 100)
+    color_forbidden = (50, 50, 50)
+    for i in range(3,9):
+        if new_nb_pions == i:
+            color = color_active
+        elif i > new_columns:
+            color = color_forbidden
+        else:
+            color = color_inactive
+        text = font.render(str(i), 1, color)
+        screen.blit(text, (screen_size[1]+15+(40*(i-3)), 257))
+
 
 # detection du clique sur l'interface
 def click_interface(mouse_pos):
+    global new_columns
+    global new_nb_pions
     if screen_size[1] <= mouse_pos[0] <= screen_size[1] + 250 - padding_step_1:
+        if 114 <= mouse_pos[1] <= 191:
+            if mouse_pos[0] <= screen_size[1] + 79:
+                new_columns = 4
+            elif mouse_pos[0] <= screen_size[1] + 160:
+                new_columns = 6
+            else:
+                new_columns = 8
+        if 248 <= mouse_pos[1] <= 284:
+            new_nb_pions = ((mouse_pos[0]-screen_size[1]-(padding_step_1))//((250 - padding_step_1- padding_step_1)//6))+3
+        if new_nb_pions > new_columns:
+                new_nb_pions = new_columns
         if padding_step_1 * 4 + 51 + 128 + 85 <= mouse_pos[1] <= padding_step_1 * 4 + 51 + 128 + 85 + 45:
             sound[0].play()
             new_game()
@@ -587,17 +771,17 @@ def draw_win(win_top):
 def animate_win():
     global win_top
     global animation
-    duration = 5000
+    duration = 2000
     mouse_pos = (-100, -100)
-    end_value = -screen_size[1] - 600
-    start_value = screen_size[1] + 300
+    end_value = -screen_size[1]-180
+    start_value = screen_size[1]
     start = time.time() * 1000
     current_time = time.time() * 1000
     animation = True
     while current_time - start <= duration:
         current_time = time.time() * 1000
-        win_top = round(ease(current_time - start, start_value, end_value, duration))
-        render((0,0))
+        win_top = round(((screen_size[1]+180)/duration)*(current_time-start))-180
+        render((0, 0))
         clock.tick(60)
     animation = False
 
@@ -630,7 +814,7 @@ padding_step_2 = 45
 columns = 6
 
 # nombre de pion à aligner par defaut
-nb_pions = 2
+nb_pions = 5
 
 # position de la souris par defaut
 mouse_pos = (0, 0)
@@ -655,15 +839,17 @@ else:
 # initiation du module pygame
 pygame.init()
 
-# définition de la fenètre
+# définition de la fenêtre
 screen_size = (800, 550)
 win_top = screen_size[1]
 screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
 pygame.display.set_caption('Pentago')
 clock = pygame.time.Clock()
+
 # chargement des fichiers image
 img = [pygame.image.load(
-    'img/0.png'), pygame.image.load('img/1.png'), pygame.image.load('img/2.png')]
+    'img/0.png'), pygame.image.load('img/1.png'),
+    pygame.image.load('img/2.png')]
 img_arrow = pygame.image.load('img/arrow.png')
 img_button_reset = [pygame.image.load(
     'img/button_reset.png'), pygame.image.load('img/button_reset_hover.png')]
@@ -674,24 +860,48 @@ img_turn = [pygame.image.load('img/turn1.png'),
 img_win = pygame.image.load('img/win.png')
 
 # chargement des fichiers audio
-sound = [pygame.mixer.Sound("drop.wav"), pygame.mixer.Sound("applause.wav")]
+sound = [pygame.mixer.Sound("songs/drop.wav"),
+         pygame.mixer.Sound("songs/applause.wav")]
 
 while running:
-    event = pygame.event.wait()
-    if event.type == pygame.MOUSEBUTTONUP:
-        click_interface(pygame.mouse.get_pos())
-        if STEP == 1:
-            pose_pion(pygame.mouse.get_pos(), PLAYER)
-        elif STEP == 2:
-            click_arrows(pygame.mouse.get_pos())
-    if event.type == pygame.MOUSEMOTION:
-        mouse_pos = event.pos
-    if event.type == pygame.VIDEORESIZE:
-        screen_size = (round(event.size[1] + 250), round(event.size[1]))
-        screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
+    # si aucunes animations en cours
     if not animation:
+        # initialisation des events
+        event = pygame.event.wait()
+
+        # lors d'un clique
+        if event.type == pygame.MOUSEBUTTONUP:
+            # gestion des cliques sur l'interface
+            click_interface(pygame.mouse.get_pos())
+
+            # si le joueur doit poser un pion
+            if STEP == 1:
+                pose_pion(pygame.mouse.get_pos(), PLAYER)
+
+            # sinon, si le joueur doit tourner un cadrant
+            elif STEP == 2:
+                click_arrows(pygame.mouse.get_pos())
+
+        # detection des mouvements de souris
+        if event.type == pygame.MOUSEMOTION:
+            # position de la souris dans la variable "mouse_pos"
+            mouse_pos = event.pos
+
+        # lorsque la fenêtre est redimensionnée
+        if event.type == pygame.VIDEORESIZE:
+            # redimensionnement de la fenêtre en gardant le bon ratio (Y+250,Y)
+            screen_size = (round(event.size[1] + 250), round(event.size[1]))
+            screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
+
+        # dessin du jeu dans la fenêtre
         render((0, 0))
+
+        # gestion du framerate
+        clock.tick(60)
+
+    # sort de la boucle si le joueur quitte le jeu
     if event.type == pygame.QUIT:
         running = False
-    clock.tick(60)
+
+# fermeture du jeu
 pygame.quit()
