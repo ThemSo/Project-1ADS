@@ -24,9 +24,6 @@ def render(rotation):
     # dessin du plateau
     draw_plateau(plateau, rotation)
 
-    # indique le nom du joueur devant jouer
-    draw_turn_player()
-
     # dessine le pion à poser
     if STEP == 1 and not animation:
         screen.blit(img[PLAYER], pygame.rect.Rect(
@@ -34,6 +31,9 @@ def render(rotation):
 
     if animation and STEP == 3:
         draw_win(win_top)
+
+    # indique le nom du joueur devant jouer
+    draw_turn_player()
 
     # dessin de l'interface
     draw_interface()
@@ -575,8 +575,7 @@ def rotate_cadrant(start, cadrant, end_value, duration):
         current_time = time.time() * 1000
 
         # dessin du jeu en fonction de l'angle de rotation d'un cadrant
-        render(
-            (cadrant, round(ease(current_time - start, start_value, end_value, duration))))
+        render((cadrant, round(ease(current_time - start, start_value, end_value, duration))))
 
     # réactive la boucle de rendu normale
     animation = False
@@ -904,6 +903,4 @@ while running:
         running = False
 
 # fermeture du jeu
-
-pygame.quit()
 pygame.quit()
