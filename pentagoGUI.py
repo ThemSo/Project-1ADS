@@ -3,6 +3,7 @@ import os.path
 import math
 import json
 import time
+from random import randint
 
 
 # retourne une liste bi-dimensionnelle de n*n
@@ -598,7 +599,7 @@ def save():
     file = open("cache", "w")
     # declaration d'un dictionnaire contenant les données du jeu en cours
     data = {'plateau': plateau, 'step': STEP, 'player': PLAYER,
-            'columns': columns, 'nb_pions': nb_pions}
+            'columns': columns, 'nb_pions': nb_pions, 'bot': bot}
     # écrit les données, parsées en JSON
     file.write(json.dumps(data))
     file.close()
@@ -613,6 +614,8 @@ def load():
     global new_columns
     global nb_pions
     global new_nb_pions
+    global bot
+    global new_bot
 
     # si le fichier de sauvegarde existe
     if os.path.isfile("cache"):
@@ -630,15 +633,17 @@ def load():
             # si les données sauvegardée sont corrects
             if 'player' in data and data['player'] != '':
                 if 'step' in data and data['step'] != '' and 'nb_pions' in data and data['nb_pions'] != '':
-                    if 'plateau' in data and data['plateau'] != '' and 'columns' in data and data['columns'] != '':
+                    if 'plateau' in data and data['plateau'] != '' and 'columns' in data and data['columns'] != '' and 'bot' in data and data['bot'] != '' :
                         # réinitialisation des variables
                         STEP = data['step']
                         PLAYER = data['player']
                         plateau = data['plateau']
                         columns = data['columns']
                         nb_pions = data['nb_pions']
+                        bot = data['bot']
                         new_columns = columns
                         new_nb_pions = nb_pions
+                        new_bot = bot
         file.close()
 
 
@@ -649,12 +654,14 @@ def new_game():
     global STEP
     global columns
     global nb_pions
+    global bot
 
     # réinitialise le joueur, l'étape du jeu, et le plateau
     STEP = 1
     PLAYER = 1 if PLAYER == 2 else 2
     columns = new_columns
     nb_pions = new_nb_pions
+    bot = new_bot
     plateau = bases(new_columns)
     render((0, 0))
 
@@ -669,8 +676,7 @@ def new_game():
 # pose un pion sur le plateau
 # mouse_pos = (tuple) position en x et y de la souris tel que (x, y)
 # player = (1 ou 2) identifiant du joueur
-def pose_pion(mouse_pos, player):
-    pos = pos_click_plateau(mouse_pos)
+def pose_pion(pos, player):
     x = pos[0]
     y = pos[1]
     if plateau[y][x] == 0 and x != -1:
@@ -782,6 +788,32 @@ def animate_win():
     animation = False
 
 
+def bot_step_1():
+    tmp = []
+    for iy, y in enumerate(plateau):
+        for ix, x in enumerate(plateau):
+            if plateau[iy][ix] == 0:
+                tmp.append((ix, iy))
+    rand = randint(0,len(tmp)-1)
+    pose_pion(tmp[rand], PLAYER)
+
+
+
+def bot_step_2():
+    height = screen_size[1] - (padding_step_2 * 2)
+    array = [
+        (padding_step_2, padding_step_2 - 30), 
+        (padding_step_2 - 30 + height, padding_step_2 - 30),
+        (padding_step_2 + height, padding_step_2),
+        (padding_step_2 + height, padding_step_2 + height - 30),
+        (padding_step_2 + height - 30, padding_step_2 + height),
+        (padding_step_2, padding_step_2 + height),
+        (padding_step_2 - 30, padding_step_2 + height - 30),
+        (padding_step_2 - 30, padding_step_2)
+    ]
+    click_arrows(array[randint(0, len(array)-1)])
+
+
 running = True
 
 # définition des couleurs
@@ -809,6 +841,8 @@ padding_step_2 = 45
 # nombre de colonnes par defaut du plateau
 columns = 6
 
+bot = [False, False]
+
 # nombre de pion à aligner par defaut
 nb_pions = 5
 
@@ -824,6 +858,7 @@ plateau = bases(columns)
 # parametres de nouvelle partie
 new_columns = 6
 new_nb_pions = 5
+new_bot = [False, False]
 
 # chargement du jeu à partir du fichier "cache"
 load()
@@ -863,41 +898,47 @@ while running:
     # si aucunes animations en cours
     if not animation:
         # initialisation des events
-        event = pygame.event.wait()
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONUP:
+                # gestion des cliques sur l'interface
+                click_interface(pygame.mouse.get_pos())
 
-        # lors d'un clique
-        if event.type == pygame.MOUSEBUTTONUP:
-            # gestion des cliques sur l'interface
-            click_interface(pygame.mouse.get_pos())
+            if not bot[PLAYER-1]:
+                if event.type == pygame.MOUSEBUTTONUP:
+                    # si le joueur doit poser un pion
+                    if STEP == 1:
+                        pose_pion(pos_click_plateau(pygame.mouse.get_pos()), PLAYER)
 
-            # si le joueur doit poser un pion
-            if STEP == 1:
-                pose_pion(pygame.mouse.get_pos(), PLAYER)
+                    # sinon, si le joueur doit tourner un cadrant
+                    elif STEP == 2:
+                        click_arrows(pygame.mouse.get_pos())
 
-            # sinon, si le joueur doit tourner un cadrant
-            elif STEP == 2:
-                click_arrows(pygame.mouse.get_pos())
+                # detection des mouvements de souris
+                if event.type == pygame.MOUSEMOTION:
+                    # position de la souris dans la variable "mouse_pos"
+                    mouse_pos = event.pos
 
-        # detection des mouvements de souris
-        if event.type == pygame.MOUSEMOTION:
-            # position de la souris dans la variable "mouse_pos"
-            mouse_pos = event.pos
+            # lorsque la fenêtre est redimensionnée
+            if event.type == pygame.VIDEORESIZE:
+                # redimensionnement de la fenêtre en gardant le bon ratio (Y+250,Y)
+                screen_size = (round(event.size[1] + 250), round(event.size[1]))
+                screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
 
-        # lorsque la fenêtre est redimensionnée
-        if event.type == pygame.VIDEORESIZE:
-            # redimensionnement de la fenêtre en gardant le bon ratio (Y+250,Y)
-            screen_size = (round(event.size[1] + 250), round(event.size[1]))
-            screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
+            # sort de la boucle si le joueur quitte le jeu
+            if event.type == pygame.QUIT:
+                running = False
 
         # dessin du jeu dans la fenêtre
         render((0, 0))
 
+        if bot[PLAYER-1]:
+            if STEP == 1:
+                bot_step_1()
+            elif STEP == 2:
+                bot_step_2()
+
         # gestion du framerate
         clock.tick(60)
-
-    # sort de la boucle si le joueur quitte le jeu
-    if event.type == pygame.QUIT:
-        running = False
 
 # fermeture du jeu
 pygame.quit()
