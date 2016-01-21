@@ -650,11 +650,6 @@ def new_game():
     global columns
     global nb_pions
 
-    # réinitialise le fichier "cache"
-    file = open("cache", "w")
-    file.write("")
-    file.close()
-
     # réinitialise le joueur, l'étape du jeu, et le plateau
     STEP = 1
     PLAYER = 1 if PLAYER == 2 else 2
@@ -667,6 +662,8 @@ def new_game():
     if padding != padding_step_1:
         resize_plateau(time.time() * 1000,
                        padding_step_1 - padding_step_2, 600)
+
+    save()
 
 
 # pose un pion sur le plateau
