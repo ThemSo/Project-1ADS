@@ -202,11 +202,9 @@ def rotation_plateau(plateau_tmp, m, n, sens):
         tmpx = maxx
         while tmpx > x:
             if not sens:
-                tmp[maxy - tmpy][tmpx - x -
-                                 1] = plateau_tmp[tmpx - 1][tmpy - 1]
+                tmp[maxy - tmpy][tmpx - x - 1] = plateau_tmp[tmpx - 1][tmpy - 1]
             else:
-                tmp[tmpy - y - 1][maxx -
-                                  tmpx] = plateau_tmp[tmpx - 1][tmpy - 1]
+                tmp[tmpy - y - 1][maxx - tmpx] = plateau_tmp[tmpx - 1][tmpy - 1]
             tmpx -= 1
         tmpy -= 1
 
@@ -643,7 +641,7 @@ def load():
                         bot = data['bot']
                         new_columns = columns
                         new_nb_pions = nb_pions
-                        new_bot = bot
+                        new_bot = [bot[0], bot[1]]
         file.close()
 
 
@@ -661,7 +659,7 @@ def new_game():
     PLAYER = 1 if PLAYER == 2 else 2
     columns = new_columns
     nb_pions = new_nb_pions
-    bot = new_bot
+    bot = [new_bot[0], new_bot[1]]
     plateau = bases(new_columns)
     render((0, 0))
 
@@ -692,16 +690,19 @@ def pose_pion(pos, player):
 
 # dessine l'interface de parametrage de parties
 def draw_interface():
-    if screen_size[1] <= mouse_pos[0] <= screen_size[1] + 250 - padding_step_1 and padding_step_1 * 4 + 51 + 128 + 85 <= mouse_pos[1] <= padding_step_1 * 4 + 51 + 128 + 85 + 45:
+    if screen_size[1] <= mouse_pos[0] <= screen_size[1] + 250 - padding_step_1 and padding_step_1 * 4 + 264 + 53 <= mouse_pos[1] <= padding_step_1 * 4 + 264 + 45 + 53:
         screen.blit(img_button_reset[1], (screen_size[
-            1], padding_step_1 * 4 + 51 + 128 + 85))
+            1], padding_step_1 * 4 + 264 + 53))
     else:
         screen.blit(img_button_reset[0], (screen_size[
-            1], padding_step_1 * 4 + 51 + 128 + 85))
+            1], padding_step_1 * 4 + 264 + 53))
 
     screen.blit(img_interface[0], (screen_size[1], padding_step_1 * 2 + 51))
-    screen.blit(img_interface[1], (screen_size[1],
-                                   padding_step_1 * 3 + 51 + 128))
+    screen.blit(img_interface[1], (screen_size[1], padding_step_1 * 3 + 51 + 128))
+
+
+    screen.blit(img_interface[2 if new_bot[0] else 3], (screen_size[1], padding_step_1 * 4 + 264))
+    screen.blit(img_interface[4 if new_bot[1] else 5], (screen_size[1] + 125, padding_step_1 * 4 + 264))
 
     # nombre de colonnes (texte)
     font = pygame.font.Font(None, 40)
@@ -745,6 +746,11 @@ def click_interface(mouse_pos):
     global new_columns
     global new_nb_pions
     if screen_size[1] <= mouse_pos[0] <= screen_size[1] + 250 - padding_step_1:
+        if padding_step_1 * 4 + 264 <= mouse_pos[1] <= padding_step_1 * 4 + 264 + 45:
+            if mouse_pos[0] <= screen_size[1] + (250//2):
+                new_bot[0] = False if new_bot[0] else True
+            else:
+                new_bot[1] = False if new_bot[1] else True
         if 114 <= mouse_pos[1] <= 191:
             if mouse_pos[0] <= screen_size[1] + 79:
                 new_columns = 4
@@ -756,7 +762,7 @@ def click_interface(mouse_pos):
             new_nb_pions = ((mouse_pos[0]-screen_size[1]-(padding_step_1))//((250 - padding_step_1- padding_step_1)//6))+3
         if new_nb_pions > new_columns:
                 new_nb_pions = new_columns
-        if padding_step_1 * 4 + 51 + 128 + 85 <= mouse_pos[1] <= padding_step_1 * 4 + 51 + 128 + 85 + 45:
+        if padding_step_1 * 4 + 51 + 128 + 85 + 53 <= mouse_pos[1] <= padding_step_1 * 4 + 51 + 128 + 85 + 45 + 53:
             sound[0].play()
             new_game()
 
@@ -885,7 +891,7 @@ img_arrow = pygame.image.load('img/arrow.png')
 img_button_reset = [pygame.image.load(
     'img/button_reset.png'), pygame.image.load('img/button_reset_hover.png')]
 img_interface = [pygame.image.load(
-    'img/nb_columns.png'), pygame.image.load('img/nb_pions.png')]
+    'img/nb_columns.png'), pygame.image.load('img/nb_pions.png'), pygame.image.load('img/wh_bot.png'), pygame.image.load('img/wh_hum.png'), pygame.image.load('img/bl_bot.png'), pygame.image.load('img/bl_hum.png')]
 img_turn = [pygame.image.load('img/turn1.png'),
             pygame.image.load('img/turn2.png')]
 img_win = pygame.image.load('img/win.png')
@@ -921,8 +927,12 @@ while running:
             # lorsque la fenêtre est redimensionnée
             if event.type == pygame.VIDEORESIZE:
                 # redimensionnement de la fenêtre en gardant le bon ratio (Y+250,Y)
-                screen_size = (round(event.size[1] + 250), round(event.size[1]))
-                screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
+                if event.size[1] > 402:    
+                    screen_size = (round(event.size[1] + 250), round(event.size[1]))
+                    screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
+                else:
+                    screen_size = (652, 402)
+                    screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
 
             # sort de la boucle si le joueur quitte le jeu
             if event.type == pygame.QUIT:
