@@ -220,21 +220,15 @@ def rotation_plateau(plateau_tmp, m, n, sens):
 # dessine les flèches permettant la rotation d'un cadrant
 def draw_arrow():
     height = screen_size[1] - (padding_step_2 * 2)
+    
     screen.blit(img_arrow, (padding_step_2, padding_step_2 - 30))
-    screen.blit(pygame.transform.flip(img_arrow, True, False),
-                (padding_step_2 - 30 + height, padding_step_2 - 30))
-    screen.blit(pygame.transform.flip(pygame.transform.rotate(
-        img_arrow, 90), True, True), (padding_step_2 + height, padding_step_2))
-    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 90),
-                                      True, False), (padding_step_2 + height, padding_step_2 + height - 30))
-    screen.blit(pygame.transform.flip(img_arrow, True, True),
-                (padding_step_2 + height - 30, padding_step_2 + height))
-    screen.blit(pygame.transform.flip(img_arrow, False, True),
-                (padding_step_2, padding_step_2 + height))
-    screen.blit(pygame.transform.rotate(img_arrow, 90),
-                (padding_step_2 - 30, padding_step_2 + height - 30))
-    screen.blit(pygame.transform.flip(pygame.transform.rotate(
-        img_arrow, 90), False, True), (padding_step_2 - 30, padding_step_2))
+    screen.blit(pygame.transform.flip(img_arrow, True, False), (padding_step_2 - 30 + height, padding_step_2 - 30))
+    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 90), True, True), (padding_step_2 + height, padding_step_2))
+    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 90), True, False), (padding_step_2 + height, padding_step_2 + height - 30))
+    screen.blit(pygame.transform.flip(img_arrow, True, True), (padding_step_2 + height - 30, padding_step_2 + height))
+    screen.blit(pygame.transform.flip(img_arrow, False, True), (padding_step_2, padding_step_2 + height))
+    screen.blit(pygame.transform.rotate(img_arrow, 90), (padding_step_2 - 30, padding_step_2 + height - 30))
+    screen.blit(pygame.transform.flip(pygame.transform.rotate(img_arrow, 90), False, True), (padding_step_2 - 30, padding_step_2))
 
 
 # tourne un cadrant lors d'un clique sur une flèche
