@@ -304,8 +304,9 @@ def click_arrows(mouse_pos):
         plateau = rotation_plateau(plateau, columns, cadrant, rotation)
 
         # lancement de l'animation de redimensionnement du plateau
-        resize_plateau(time.time() * 1000,
-                       padding_step_1 - padding_step_2, 600)
+        if padding > padding_step_1:
+            resize_plateau(time.time() * 1000,
+                        padding_step_1 - padding_step_2, 600)
 
         # détection de victoire
         if not test_win(columns, plateau, nb_pions, PLAYER):
@@ -664,7 +665,7 @@ def new_game():
     render((0, 0))
 
     # redimensionne la taille du plateau si besoin
-    if padding != padding_step_1:
+    if padding > padding_step_1:
         resize_plateau(time.time() * 1000,
                        padding_step_1 - padding_step_2, 600)
 
@@ -683,7 +684,8 @@ def pose_pion(pos, player):
         plateau[y][x] = player
         if not test_win(columns, plateau, nb_pions, player):
             STEP = 2
-            resize_plateau(time.time() * 1000,
+            if padding < padding_step_2:
+                resize_plateau(time.time() * 1000,
                            padding_step_2 - padding_step_1, 600)
             save()
 
